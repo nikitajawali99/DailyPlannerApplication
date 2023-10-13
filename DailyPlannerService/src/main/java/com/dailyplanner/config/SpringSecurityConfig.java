@@ -26,7 +26,6 @@ public class SpringSecurityConfig {
 
 	private CustomerSuccessHandler customerSucessHandler;
 
-
 	@Bean
 	public static PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
