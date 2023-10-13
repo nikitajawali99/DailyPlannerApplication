@@ -37,15 +37,7 @@ pipeline {
               }
             }
         }
-        
-        stage('JUNit Reports') {
-            steps {
-               dir("${env.WORKSPACE}/DailyPlannerService"){
-                    junit 'target/surefire-reports/*.xml'
-		                echo "Publishing JUnit reports"
-               }
-            }
-        }
+
         
         stage('Jacoco Reports') {
             steps {
