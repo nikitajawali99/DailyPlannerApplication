@@ -43,8 +43,7 @@ public class User {
 	@Column(nullable = false)
 	private Date createdDate;
 
-	@Column(columnDefinition = "boolean default false")
-	private char isEnabled;
+	private char enabled;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id", updatable = false, insertable = false))
@@ -114,12 +113,12 @@ public class User {
 		this.roles = roles;
 	}
 
-	public char isEnabled() {
-		return isEnabled;
+	public char getEnabled() {
+		return enabled;
 	}
 
-	public void setEnabled(char isEnabled) {
-		this.isEnabled = isEnabled;
+	public void setEnabled(char enabled) {
+		this.enabled = enabled;
 	}
 
 }

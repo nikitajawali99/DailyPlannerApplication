@@ -8,7 +8,7 @@ import com.dailyplanner.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	@Query("select p from User p where p.email=:email and p.isEnabled ='1' ")
+	@Query("select p from User p where p.email=:email and p.enabled ='1' ")
 	User findByEmail(@Param("email") String email);
 	
 	@Query("select p from User p where p.email=:email ")

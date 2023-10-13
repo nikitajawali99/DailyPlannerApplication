@@ -44,7 +44,7 @@ public class EmailVerificationTokenController {
 		
 		System.out.println(theToken);
 		
-		char tokenResult = theToken.get().getUser().isEnabled();
+		char tokenResult = theToken.get().getUser().getEnabled();
 		
 	
 		if(theToken.isPresent() && tokenResult == '1' ) {
