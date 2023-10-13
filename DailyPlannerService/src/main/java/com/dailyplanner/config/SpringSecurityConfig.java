@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SpringSecurityConfig {
 	
+	
 	private UserDetailsService userDetailsService;
 
 	private CustomerSuccessHandler customerSucessHandler;
