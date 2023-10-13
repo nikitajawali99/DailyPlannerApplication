@@ -4,14 +4,14 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-              git branch: 'main', url: 'https://github.com/nikitajawali99/DailyPlannerApplication.git'    
+              git branch: 'main', url: 'https://github.com/nikitajawali99/DailyPlannerService.git'    
 		            echo "Code Checked-out Successfully!!";
             }
         }
         
           stage('OWASP Dependency Check') {
             steps {
-              dir("${env.WORKSPACE}/DailyPlannerApplication"){
+              dir("${env.WORKSPACE}/DailyPlannerService"){
                 
                 dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'DC'
                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
@@ -22,7 +22,7 @@ pipeline {
         
         stage('Compile') {
             steps {
-              dir("${env.WORKSPACE}/DailyPlannerApplication"){
+              dir("${env.WORKSPACE}/DailyPlannerService"){
                 bat 'mvn compile'    
 		            echo "Maven Compile Goal Executed Successfully!";
               }
@@ -31,7 +31,7 @@ pipeline {
         
         stage('Package') {
             steps {
-              dir("${env.WORKSPACE}/DailyPlannerApplication"){
+              dir("${env.WORKSPACE}/DailyPlannerService"){
                 bat 'mvn package'    
 		            echo "Maven Package Goal Executed Successfully!";
               }
@@ -40,7 +40,7 @@ pipeline {
         
         stage('JUNit Reports') {
             steps {
-               dir("${env.WORKSPACE}/DailyPlannerApplication"){
+               dir("${env.WORKSPACE}/DailyPlannerService"){
                     junit 'target/surefire-reports/*.xml'
 		                echo "Publishing JUnit reports"
                }
@@ -49,7 +49,7 @@ pipeline {
         
         stage('Jacoco Reports') {
             steps {
-                dir("${env.WORKSPACE}/DailyPlannerApplication"){
+                dir("${env.WORKSPACE}/DailyPlannerService"){
                   jacoco()
                   echo "Publishing Jacoco Code Coverage Reports";
                 }
@@ -60,7 +60,7 @@ pipeline {
             steps {
                
 		// Change this as per your Jenkins Configuration
-		 dir("${env.WORKSPACE}/DailyPlannerApplication"){
+		 dir("${env.WORKSPACE}/DailyPlannerService"){
                 withSonarQubeEnv('SonarQube') {
                     bat 'mvn package sonar:sonar'
                 }
@@ -71,10 +71,10 @@ pipeline {
 
       stage('Deployment') {
             steps {
-              dir("${env.WORKSPACE}/DailyPlannerApplication"){
+              dir("${env.WORKSPACE}/DailyPlannerService"){
       
 		             deploy adapters: [tomcat9(url: 'http://localhost:9090/', credentialsId: 'Tomcat-cred')],war: '**/*.war',
-                     contextPath: 'DailyPlannerApplication'
+                     contextPath: 'DailyPlannerService'
 		        echo "Tomcat deployment Executed Successfully!";
               }
             }
