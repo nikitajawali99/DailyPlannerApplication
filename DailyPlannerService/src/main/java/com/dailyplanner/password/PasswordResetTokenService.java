@@ -1,0 +1,62 @@
+package com.dailyplanner.password;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Optional;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.dailyplanner.entity.User;
+import com.dailyplanner.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class PasswordResetTokenService implements IPasswordResetTokenService {
+
+	private final PasswordResetTokenRepository passwordResetTokenRepository;
+	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
+
+	@Override
+	public void createPasswordResetTokenForUser(User user, String passwordResetToken) {
+
+		PasswordResetToken resetToken = new PasswordResetToken(passwordResetToken, user);
+		resetToken.setCreatedDate(new Date());
+		passwordResetTokenRepository.save(resetToken);
+
+	}
+
+	@Override
+	public String validatePasswordResetToken(String theToken) {
+
+		Optional<PasswordResetToken> passwordResetToken = passwordResetTokenRepository.findByToken(theToken);
+		if (passwordResetToken.isEmpty()) {
+			return "invalid";
+		}
+		Calendar calendar = Calendar.getInstance();
+		if ((passwordResetToken.get().getExpirationTime().getTime() - calendar.getTime().getTime()) <= 0) {
+			return "expired";
+		}
+		return "valid";
+	}
+
+	@Override
+	public Optional<User> findUserByPasswordResetToken(String theToken) {
+		return Optional.ofNullable(passwordResetTokenRepository.findByToken(theToken).get().getUser());
+	}
+
+	@Override
+	public void resetPassword(User theUser, String password) {
+
+		theUser.setPassword(passwordEncoder.encode(password));
+		theUser.setConfirmPassword(passwordEncoder.encode(password));
+		
+		
+		
+		userRepository.save(theUser);
+	}
+
+}

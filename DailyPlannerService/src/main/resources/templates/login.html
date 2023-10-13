@@ -57,6 +57,12 @@
             Email verified successfully, please log in here.
           </div>
            </div>
+             <div th:if="${param.reset_success}">
+             <div class="alert alert-info">
+            Password reset successfully, please log in here.
+          </div>
+           </div>
+          
 
             <div class="card">
                 <div class="card-header">
@@ -84,6 +90,9 @@
 								<span> Not registered ? <a th:href="@{/register}">Register/Signup
 										here</a>
 								</span>
+								
+								  <span><a href="/" th:href="@{registration/forgot-password-request}">Forgot password?</a> </span>
+								
 							</div>
 						</form>
 					</div>

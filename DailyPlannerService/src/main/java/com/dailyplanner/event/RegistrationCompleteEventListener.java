@@ -69,6 +69,8 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 		}
 
 	}
+	
+	
 
 	@Transactional
 	private void saveVerificationTokenForUser(User user, String vToken) {
@@ -84,14 +86,40 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 
 		String subject = "Email Verification";
 		String senderName = "Daily Planner Portal Service";
-		   String mailContent = "<p> Hi, "+ user.getName()+ ", </p>"+
+//		   String mailContent = "<p> Hi, "+ user.getName()+ ", </p>"+
+//	                "<p>Thank you for registering with us,"+"" +
+//	                "Please, follow the link below to complete your registration.</p>"+
+//	                "<a href=\"" +url+ "\">Verify your email to activate your account</a>"+
+//	                "<p> Thank you <br> Users Registration Portal Service";
+		   
+		    String mailContent = "<p> Hi, "+ user.getName()+ ", </p>"+
 	                "<p>Thank you for registering with us,"+"" +
 	                "Please, follow the link below to complete your registration.</p>"+
 	                "<a href=\"" +url+ "\">Verify your email to activate your account</a>"+
-	                "<p> Thank you <br> Users Registration Portal Service";
+	                "<p> Thank you <br> Daily Planner Registration Portal Service";
+		    
+		    
 		emailMessage(subject, senderName, mailContent, mailSender, user);
 
 	}
+	
+	public void sendPasswordResetVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
+        String subject = "Password Reset Request Verification";
+        String senderName = "Daily Planner Portal Service";
+//        String mailContent = "<p> Hi, "+ user.getName()+ ", </p>"+
+//                "<p><b>You recently requested to reset your password,</b>"+"" +
+//                "Please, follow the link below to complete the action.</p>"+
+//                "<a href=\"" +url+ "\">Reset password</a>"+
+//                "<p> Daily Planner Portal Service";
+        
+        String mailContent = "<p> Hi, "+  ", </p>"+
+                "<p><b>You recently requested to reset your password,</b>"+"" +
+                "Please, follow the link below to complete the action.</p>"+
+                "<a href=\"" +url+ "\">Reset password</a>"+
+                "<p> Daily Planner Portal Service";
+        
+        emailMessage(subject, senderName, mailContent, mailSender, user);
+    }
 
 	private static void emailMessage(String subject, String senderName, String mailContent,
 			JavaMailSender mailSender,
