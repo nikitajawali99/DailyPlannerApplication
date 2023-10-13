@@ -43,6 +43,7 @@ public class SpringSecurityConfig {
 	                .requestMatchers("/index").permitAll()
 	                .requestMatchers("/error").permitAll()
 	                .requestMatchers("/contact").permitAll()
+	                .requestMatchers("/password-reset-form/**").permitAll()
 	                .requestMatchers("/login").hasAnyRole("USER","ADMIN")
 	                .requestMatchers("/users").hasAnyRole("USER","ADMIN")  
 	                .requestMatchers("/todos/**").hasRole("USER")
