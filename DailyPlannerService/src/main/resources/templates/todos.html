@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>All Todos</title>
+</head>
+<body>
+	<table class="table table-striped table-hover table-bordered">
+
+		<thead class="table-dark">
+
+			<tr>
+				<th>Student First Name</th>
+				<th>Student Last Name</th>
+				<th>Student Email</th>
+			</tr>
+
+		</thead>
+
+		<tbody>
+			<tr th:each="todo:${todos}">
+
+				<td th:text="${todo.title}"></td>
+
+				<td th:text="${todo.description}"></td>
+				<td th:text="${todo.completed}"></td>
+			</tr>
+		</tbody>
+
+
+	</table>
+	
+	<br>
+
+<footer class="footer-distributed">
+
+		<div class="footer-right">
+			<center>
+				<p class="footer-company-about">
+
+					<strong>Become focused, organized, and calm with Daily
+						Planner.</strong> <br>The world’s #1 task manager and to-do list app
+
+				</p>
+			</center>
+		</div>
+		
+			<div class="footer-left">
+
+			<center>
+				<p class="footer-company-name">
+					Copyright © 2023 <strong>Nikita Jawali. </strong>All rights reserved
+				</p>
+			</center>
+		</div>
+		
+	</footer>
+
+</body>
+</html>

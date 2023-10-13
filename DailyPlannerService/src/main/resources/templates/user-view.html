@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Planner System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+</head>
+
+<style>
+#firstname {
+  background-position: right bottom, left top;
+  background-repeat: no-repeat, repeat;
+  padding: 15px;
+}
+
+body {
+/*   background-image: linear-gradient(pink, hsl(300, 76%, 72%), pink); */
+ background-position: right bottom, left top;
+  background-repeat: no-repeat, repeat;
+  padding: 15px;
+  }
+</style>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/index}">Daily Planner System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/todos/createTodo}">Create new Todo</a>
+                </li>
+                  <li class="nav-item">
+<!--                       <a class="btn btn-primary" th:href="@{/users/{id}/view(id=${user.id})}">View Todos</a> -->
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+    
+ 
+     
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+<!--                     <a class="nav-link active" aria-current="page" th:href="@{/contact}">Contact</a> -->
+                </li>
+                  <li class="nav-item">
+                     <a class="nav-link active" aria-current="page" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+</nav>
+<br /><br />
+
+
+<h2>Welcome, [[${user.getName()}]]</h2>
+
+<br>
+
+ <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Registered Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+           <tr>
+               <td th:text = "${user.getName()}"></td>
+                
+                <td th:text = "${user.email}"></td>
+                 <td th:text = "${user.address}"></td>
+                 <td th:text = "${user.createdDate}"></td>
+                <td>
+                 <a class="btn btn-primary" th:href="@{/users/{id}/userview(id=${user.id})}">View Todos</a>
+                <a class="btn btn-warning" th:href="@{/users/{id}/edit(id=${user.id})}">Edit-Details</a>
+<!--                   <a class="btn btn-danger" th:href="@{/users/{id}/delete(id=${user.id})}">Delete</a> -->
+                </td>
+       
+            </tr>
+        </tbody>
+    </table>
+
+<br>
+<br><br>
+<br><br>
+<br><br>
+	
+	<footer class="footer-distributed">
+
+		<div class="footer-right">
+			<center>
+				<p class="footer-company-about">
+
+					<strong>Become focused, organized, and calm with Daily
+						Planner.</strong> <br>The world’s #1 task manager and to-do list app
+
+				</p>
+			</center>
+		</div>
+		
+			<div class="footer-left">
+
+			<center>
+				<p class="footer-company-name">
+					Copyright © 2023 <strong>Nikita Jawali. </strong>All rights reserved
+				</p>
+			</center>
+		</div>
+		
+	</footer>
+
+</body>
+</html>
