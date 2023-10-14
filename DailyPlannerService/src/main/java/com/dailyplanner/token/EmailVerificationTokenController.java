@@ -113,10 +113,16 @@ public class EmailVerificationTokenController {
 
 		Optional<User> theUser = passwordResetTokenService.findUserByPasswordResetToken(theToken);
 		if (theUser.isPresent()) {
-			passwordResetTokenService.resetPassword(theUser.get(), password,confirmPassword);
-			return "redirect:/login?reset_success";
+			String resetPassword = passwordResetTokenService.resetPassword(theUser.get(), password,confirmPassword);
+			
+			if(resetPassword.equals("redirect:/error?mismatch_password")) {
+				return "redirect:/error?mismatch_password";
+			}
+			
+			System.out.println("resetPassword :"+resetPassword);
+			//return "redirect:/login?reset_success";
 		}
-		return "redirect:/error?not_found";
+		return "redirect:/login?reset_success";
 	}
 
 	@PostMapping("/forgot-password")

@@ -56,6 +56,10 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
 		}
 		else {
 		resetToken = 	new PasswordResetToken();
+		resetToken.setExpirationTime(TokenExpirationTime.getExpirationTime());
+		resetToken.setCreatedDate(new Date());
+		resetToken.setUser(user);
+		resetToken.setToken(passwordResetToken);
 		
 		}
 		resetToken =  passwordResetTokenRepository.save(resetToken);
@@ -129,11 +133,18 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
 	}
 
 	@Override
-	public void resetPassword(User theUser, String password,String confirmpassword) {
+	public String resetPassword(User theUser, String password, String confirmpassword) {
 
 		theUser.setPassword(passwordEncoder.encode(password));
-		theUser.setConfirmPassword(passwordEncoder.encode(confirmpassword));		
-		userRepository.save(theUser);
+		theUser.setConfirmPassword(passwordEncoder.encode(confirmpassword));
+
+		if (password.equals(confirmpassword)) {
+
+			userRepository.save(theUser);
+		} else {
+			return "redirect:/error?mismatch_password";
+		}
+		return "redirect:/login?reset_success";
 	}
 
 }
