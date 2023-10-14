@@ -18,12 +18,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class PasswordResetToken {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private String token;
 	private Date expirationTime;
 	@OneToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id",unique = false)
 	private User user;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/mm/yyyy")
 	@Column(nullable = false)
@@ -34,5 +34,15 @@ public class PasswordResetToken {
 		this.user = user;
 		this.expirationTime = TokenExpirationTime.getExpirationTime();
 	}
+
+	public PasswordResetToken(Long id, String token, Date expirationTime, User user) {
+		super();
+		this.id = id;
+		this.token = token;
+		this.expirationTime = TokenExpirationTime.getExpirationTime();
+		this.user = user;
+	}
+	
+	
 
 }

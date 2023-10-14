@@ -25,6 +25,9 @@
             <div th:if="${param.expired}" class="col-sm-8">
                 <p class="alert alert-info">This verification link has already expired.</p>
             </div>
+               <div th:if="${param.mismatch_password}" class="col-sm-8">
+                <p class="alert alert-info">Password and Confirm Password are not same.</p>
+            </div>
         </div>
     <a href="#" th:href="@{/}">Go to home page</a>
 </div>

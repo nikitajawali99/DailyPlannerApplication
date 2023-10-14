@@ -94,6 +94,7 @@ public class EmailVerificationTokenController {
 	public String resetPassword(HttpServletRequest request) {
 		String theToken = request.getParameter("token");
 		String password = request.getParameter("password");
+		String confirmPassword = request.getParameter("confirmPassword");
 		String tokenVerificationResult = passwordResetTokenService.validatePasswordResetToken(theToken);
 		if (!tokenVerificationResult.equalsIgnoreCase("valid")) {
 			return "redirect:/error?invalid_token";
@@ -112,7 +113,7 @@ public class EmailVerificationTokenController {
 
 		Optional<User> theUser = passwordResetTokenService.findUserByPasswordResetToken(theToken);
 		if (theUser.isPresent()) {
-			passwordResetTokenService.resetPassword(theUser.get(), password);
+			passwordResetTokenService.resetPassword(theUser.get(), password,confirmPassword);
 			return "redirect:/login?reset_success";
 		}
 		return "redirect:/error?not_found";

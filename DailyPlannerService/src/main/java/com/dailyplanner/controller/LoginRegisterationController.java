@@ -187,13 +187,21 @@ public class LoginRegisterationController {
 	    public String resetPassword(HttpServletRequest request){
 	        String theToken = request.getParameter("token");
 	        String password = request.getParameter("password");
+	        String confirmpassword = request.getParameter("confirmPassword");
+	        
+	        
+	        if(!password.equals(confirmpassword)) {
+	        	 return "redirect:/error?mismatch_password";
+	        	
+	        }
+	        
 	        String tokenVerificationResult = passwordResetTokenService.validatePasswordResetToken(theToken);
 	        if (!tokenVerificationResult.equalsIgnoreCase("valid")){
 	            return "redirect:/error?invalid_token";
 	        }
 	        Optional<User> theUser = passwordResetTokenService.findUserByPasswordResetToken(theToken);
 	        if (theUser.isPresent()){
-	            passwordResetTokenService.resetPassword(theUser.get(), password);
+	            passwordResetTokenService.resetPassword(theUser.get(), password,confirmpassword);
 	            return "redirect:/login?reset_success";
 	        }
 	        return "redirect:/error?not_found";
