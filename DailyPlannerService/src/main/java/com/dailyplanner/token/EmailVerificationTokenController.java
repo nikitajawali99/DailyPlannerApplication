@@ -19,6 +19,7 @@ import com.dailyplanner.event.RegistrationCompleteEvent;
 import com.dailyplanner.event.RegistrationCompleteEventListener;
 import com.dailyplanner.password.IPasswordResetTokenService;
 import com.dailyplanner.repository.ContactRepository;
+import com.dailyplanner.repository.UserRepository;
 import com.dailyplanner.service.UserService;
 import com.dailyplanner.utils.UrlUtil;
 
@@ -35,16 +36,19 @@ public class EmailVerificationTokenController {
 	private final IVerificationTokenService tokenService;
 	private final IPasswordResetTokenService passwordResetTokenService;
 	private final RegistrationCompleteEventListener eventListener;
+	private final UserRepository userRepository;
 
 	public EmailVerificationTokenController(UserService userService, ContactRepository contactRepository,
 			ApplicationEventPublisher publisher, IVerificationTokenService tokenService,
-			IPasswordResetTokenService passwordResetTokenService, RegistrationCompleteEventListener eventListener) {
+			IPasswordResetTokenService passwordResetTokenService, 
+			RegistrationCompleteEventListener eventListener,UserRepository userRepository) {
 		this.userService = userService;
 		this.contactRepository = contactRepository;
 		this.publisher = publisher;
 		this.tokenService = tokenService;
 		this.passwordResetTokenService = passwordResetTokenService;
 		this.eventListener = eventListener;
+		this.userRepository=userRepository;
 
 	}
 
@@ -118,7 +122,7 @@ public class EmailVerificationTokenController {
 	public String resetPasswordRequest(HttpServletRequest request, Model model,@ModelAttribute("user") UserDto userDto) {
 
 		String email = request.getParameter("email");
-		User user = userService.findUserByEmail(email);
+		User user = userRepository.findByEmail(email);
 		
 		System.out.println("UserDto :"+userDto);
 
