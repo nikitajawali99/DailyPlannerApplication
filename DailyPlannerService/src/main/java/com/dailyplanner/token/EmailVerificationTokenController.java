@@ -40,15 +40,15 @@ public class EmailVerificationTokenController {
 
 	public EmailVerificationTokenController(UserService userService, ContactRepository contactRepository,
 			ApplicationEventPublisher publisher, IVerificationTokenService tokenService,
-			IPasswordResetTokenService passwordResetTokenService, 
-			RegistrationCompleteEventListener eventListener,UserRepository userRepository) {
+			IPasswordResetTokenService passwordResetTokenService, RegistrationCompleteEventListener eventListener,
+			UserRepository userRepository) {
 		this.userService = userService;
 		this.contactRepository = contactRepository;
 		this.publisher = publisher;
 		this.tokenService = tokenService;
 		this.passwordResetTokenService = passwordResetTokenService;
 		this.eventListener = eventListener;
-		this.userRepository=userRepository;
+		this.userRepository = userRepository;
 
 	}
 
@@ -57,11 +57,7 @@ public class EmailVerificationTokenController {
 	@GetMapping("/verifyEmail")
 	public String verifyEmail(@RequestParam("token") String token) {
 
-		System.out.println("IN verifyEmail");
-
 		Optional<VerificationToken> theToken = tokenService.findByToken(token);
-
-		System.out.println(theToken);
 
 		char tokenResult = theToken.get().getUser().getEnabled();
 
@@ -83,10 +79,10 @@ public class EmailVerificationTokenController {
 
 	@GetMapping("/forgot-password-request")
 	public String forgotPasswordForm(Model model) {
-		
+
 		UserDto user = new UserDto();
 		model.addAttribute("user", user);
-		
+
 		return "forgot-password-form";
 	}
 
@@ -113,25 +109,23 @@ public class EmailVerificationTokenController {
 
 		Optional<User> theUser = passwordResetTokenService.findUserByPasswordResetToken(theToken);
 		if (theUser.isPresent()) {
-			String resetPassword = passwordResetTokenService.resetPassword(theUser.get(), password,confirmPassword);
-			
-			if(resetPassword.equals("redirect:/error?mismatch_password")) {
+			String resetPassword = passwordResetTokenService.resetPassword(theUser.get(), password, confirmPassword);
+
+			if (resetPassword.equals("redirect:/error?mismatch_password")) {
 				return "redirect:/error?mismatch_password";
 			}
-			
-			System.out.println("resetPassword :"+resetPassword);
-			//return "redirect:/login?reset_success";
+
+			// return "redirect:/login?reset_success";
 		}
 		return "redirect:/login?reset_success";
 	}
 
 	@PostMapping("/forgot-password")
-	public String resetPasswordRequest(HttpServletRequest request, Model model,@ModelAttribute("user") UserDto userDto) {
+	public String resetPasswordRequest(HttpServletRequest request, Model model,
+			@ModelAttribute("user") UserDto userDto) {
 
 		String email = request.getParameter("email");
 		User user = userRepository.findByEmail(email);
-		
-		System.out.println("UserDto :"+userDto);
 
 		if (user == null) {
 			return "redirect:/registration/forgot-password-request?not_found";
@@ -140,19 +134,16 @@ public class EmailVerificationTokenController {
 		String passwordResetToken = UUID.randomUUID().toString();
 		passwordResetTokenService.createPasswordResetTokenForUser(user, passwordResetToken);
 		// send password reset verification email to the user
-		String url = UrlUtil.getApplicationUrl(request) + "/password-reset-form?token="
-				+ passwordResetToken;
+		String url = UrlUtil.getApplicationUrl(request) + "/password-reset-form?token=" + passwordResetToken;
 
 		try {
-			
-			System.out.println("Hii before");
-			
-			eventListener.sendPasswordResetVerificationEmail(url,user);
-			
-			System.out.println("Hii after");
-			//publisher.publishEvent(new RegistrationCompleteEvent(user, UrlUtil.getApplicationUrl(request)));
 
-		} catch (Exception  e) {
+			eventListener.sendPasswordResetVerificationEmail(url, user);
+
+			// publisher.publishEvent(new RegistrationCompleteEvent(user,
+			// UrlUtil.getApplicationUrl(request)));
+
+		} catch (Exception e) {
 			model.addAttribute("error", e.getMessage());
 			e.printStackTrace();
 		}

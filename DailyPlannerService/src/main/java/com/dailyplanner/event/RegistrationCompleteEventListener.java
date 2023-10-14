@@ -5,29 +5,18 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.UUID;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import com.dailyplanner.entity.User;
-import com.dailyplanner.token.IVerificationTokenService;
 import com.dailyplanner.token.VerificationToken;
 import com.dailyplanner.token.VerificationTokenRepository;
-import com.dailyplanner.token.VerificationTokenServiceImpl;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import java.util.Properties;
 import jakarta.mail.MessagingException;
 import jakarta.mail.*;
-import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -35,9 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class RegistrationCompleteEventListener implements ApplicationListener<RegistrationCompleteEvent> {
 
 	private final JavaMailSender mailSender;
-	private final VerificationTokenServiceImpl tokenService;
-	
-
 	private final VerificationTokenRepository tokenRepository;
 	private User user;
 
@@ -101,7 +87,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 	
 	public void sendPasswordResetVerificationEmail(String url, User user) throws MessagingException, UnsupportedEncodingException {
       
-		System.out.println("Hii user for mail");
+		
 		
 		String subject = "Password Reset Request Verification | Daily Planner Service";
         String senderName = "Daily Planner Service";
@@ -110,8 +96,6 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 //                "Please, follow the link below to complete the action.</p>"+
 //                "<a href=\"" +url+ "\">Reset password</a>"+
 //                "<p> Daily Planner Portal Service";
-        
-        //System.out.println("Hi user :"+user);
 //        
 //        String mailContent = "<p> Hi, "+  ", </p>"+
 //                "<p><b>You recently requested to reset your password,</b>"+"" +
@@ -170,7 +154,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 //		messageHelper.setText(mailContent, true);
 //		
 //		mailSender.send(message);
-		System.out.println("Mail send successfully ");
+	
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

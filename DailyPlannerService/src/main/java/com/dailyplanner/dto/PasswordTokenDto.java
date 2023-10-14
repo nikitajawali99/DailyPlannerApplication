@@ -1,6 +1,6 @@
 package com.dailyplanner.dto;
 
-import org.springframework.stereotype.Service;
+
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

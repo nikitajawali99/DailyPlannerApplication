@@ -1,9 +1,7 @@
 package com.dailyplanner.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +19,10 @@ import com.dailyplanner.dto.ContactDto;
 import com.dailyplanner.dto.UserDto;
 import com.dailyplanner.entity.*;
 import com.dailyplanner.event.RegistrationCompleteEvent;
-import com.dailyplanner.event.RegistrationCompleteEventListener;
 import com.dailyplanner.password.IPasswordResetTokenService;
-import com.dailyplanner.password.PasswordResetTokenService;
 import com.dailyplanner.repository.ContactRepository;
 import com.dailyplanner.service.UserService;
-import com.dailyplanner.token.IVerificationTokenService;
-import com.dailyplanner.token.VerificationToken;
 import com.dailyplanner.utils.UrlUtil;
-
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
@@ -43,19 +35,15 @@ public class LoginRegisterationController {
 	private UserService userService;
 	private final ContactRepository contactRepository;
 	private final ApplicationEventPublisher publisher;
-	private final IVerificationTokenService tokenService;
 	private final IPasswordResetTokenService passwordResetTokenService;
-	private final RegistrationCompleteEventListener eventListener;
 
 	public LoginRegisterationController(UserService userService, ContactRepository contactRepository,
-			ApplicationEventPublisher publisher, IVerificationTokenService tokenService,
-			IPasswordResetTokenService passwordResetTokenService, RegistrationCompleteEventListener eventListener) {
+			ApplicationEventPublisher publisher,
+			IPasswordResetTokenService passwordResetTokenService) {
 		this.userService = userService;
 		this.contactRepository = contactRepository;
 		this.publisher = publisher;
-		this.tokenService = tokenService;
 		this.passwordResetTokenService = passwordResetTokenService;
-		this.eventListener = eventListener;
 
 	}
 
@@ -161,7 +149,7 @@ public class LoginRegisterationController {
 			else {
 				User user = userService.saveUser(userDto);
 
-				System.out.println("Request :" + request);
+	
 				// publish verification-email event
 				publisher.publishEvent(new RegistrationCompleteEvent(user, UrlUtil.getApplicationUrl(request)));
 
