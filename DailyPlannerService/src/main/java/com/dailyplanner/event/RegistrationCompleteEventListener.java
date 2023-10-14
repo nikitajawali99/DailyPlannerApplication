@@ -84,21 +84,17 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 	@Transactional
 	public void sendVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
 
-		String subject = "Email Verification";
-		String senderName = "Daily Planner Portal Service";
-//		   String mailContent = "<p> Hi, "+ user.getName()+ ", </p>"+
-//	                "<p>Thank you for registering with us,"+"" +
-//	                "Please, follow the link below to complete your registration.</p>"+
-//	                "<a href=\"" +url+ "\">Verify your email to activate your account</a>"+
-//	                "<p> Thank you <br> Users Registration Portal Service";
-		   
-		    String mailContent = "<p> Hi, "+ user.getName()+ ", </p>"+
-	                "<p>Thank you for registering with us,"+"" +
-	                "Please, follow the link below to complete your registration.</p>"+
-	                "<a href=\"" +url+ "\">Verify your email to activate your account</a>"+
-	                "<p> Thank you <br> Daily Planner Registration Portal Service";
-		    
-		    
+		String subject = "Email Verification | Daily Planner Service ";
+		String senderName = "Daily Planner Service";
+
+//		String mailContent = " Hi, " + user.getName() + ", " + " Thank you for registering with us,  " + ""
+//				+ "Please, follow the link below to complete your registration." + "<a href=\"" + url
+//				+ "\">Verify your email to activate your account. </a>";
+		
+		String mailContent = " Hi " + user.getName() + ", " + " Thank you for registering with us.  " + ""
+				+ "\n" + "\n" + "Please, follow the link below to complete your registration : " + "" + url+ "\" "
+				+ "\n" + "\n" + "Verify your email to activate your account. ";
+
 		emailMessage(subject, senderName, mailContent, mailSender, user);
 
 	}
@@ -107,8 +103,8 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
       
 		System.out.println("Hii user for mail");
 		
-		String subject = "Password Reset Request Verification";
-        String senderName = "Daily Planner Portal Service";
+		String subject = "Password Reset Request Verification | Daily Planner Service";
+        String senderName = "Daily Planner Service";
 //        String mailContent = "<p> Hi, "+ user.getName()+ ", </p>"+
 //                "<p><b>You recently requested to reset your password,</b>"+"" +
 //                "Please, follow the link below to complete the action.</p>"+
@@ -116,12 +112,16 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 //                "<p> Daily Planner Portal Service";
         
         //System.out.println("Hi user :"+user);
+//        
+//        String mailContent = "<p> Hi, "+  ", </p>"+
+//                "<p><b>You recently requested to reset your password,</b>"+"" +
+//                "Please, follow the link below to complete the action.</p>"+
+//                "<a href=\"" +url+ "\">Reset password</a>"+
+//                "<p> Daily Planner Portal Service";
         
-        String mailContent = "<p> Hi, "+  ", </p>"+
-                "<p><b>You recently requested to reset your password,</b>"+"" +
-                "Please, follow the link below to complete the action.</p>"+
-                "<a href=\"" +url+ "\">Reset password</a>"+
-                "<p> Daily Planner Portal Service";
+        String mailContent = " Hi " + user.getName() + ", " + " You recently requested to reset your password,  " + ""
+				+ "\n" + "\n" + "Please, follow the link below to complete the action : " + "" + url+ "\" "
+				+ "\n" + "\n" + "Reset password. ";
         
         emailMessage(subject, senderName, mailContent, mailSender, user);
     }
