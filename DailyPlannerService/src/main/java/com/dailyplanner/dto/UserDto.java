@@ -18,10 +18,10 @@ import lombok.*;
 public class UserDto {
 	private Long id;
 
-	@NotEmpty(message = "User first name should not be null or empty")
+	@NotEmpty(message = "Name should not be null")
 	private String firstName;
 	
-	@NotEmpty(message = "User email should not be null or empty")
+	@NotEmpty(message = "Email should not be null")
 	@Email(message = "Email address should be valid")
 	private String email;
 	
@@ -34,7 +34,7 @@ public class UserDto {
 	private String confirmPassword;
 	
 	@Size(min=3,message = "User address cannot be less than 3 characters")
-	@NotEmpty(message = "User address should not be null or empty")
+	@NotEmpty(message = "User address should not be null")
 	private String address;
 
 	private String username;

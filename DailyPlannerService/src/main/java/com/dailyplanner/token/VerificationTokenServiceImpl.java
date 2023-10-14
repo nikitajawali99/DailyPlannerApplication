@@ -1,16 +1,12 @@
 package com.dailyplanner.token;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.dailyplanner.entity.User;
 import com.dailyplanner.repository.UserRepository;
-
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Service

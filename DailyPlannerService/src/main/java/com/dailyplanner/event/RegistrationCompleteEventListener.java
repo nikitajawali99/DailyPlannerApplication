@@ -70,7 +70,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 	@Transactional
 	public void sendVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
 
-		String subject = "Email Verification | Daily Planner Service ";
+		String subject = "Email Verification | Daily Planner System ";
 		String senderName = "Daily Planner Service";
 
 //		String mailContent = " Hi, " + user.getName() + ", " + " Thank you for registering with us,  " + ""
@@ -89,7 +89,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
       
 		
 		
-		String subject = "Password Reset Request Verification | Daily Planner Service";
+		String subject = "Password Reset Request Verification | Daily Planner System";
         String senderName = "Daily Planner Service";
 //        String mailContent = "<p> Hi, "+ user.getName()+ ", </p>"+
 //                "<p><b>You recently requested to reset your password,</b>"+"" +
