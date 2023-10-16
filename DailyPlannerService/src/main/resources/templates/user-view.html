@@ -38,6 +38,9 @@ body {
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" th:href="@{/todos/createTodo}">Create new Todo</a>
                 </li>
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" th:href="@{/change-password}">Change Password</a>
+					</li>
                   <li class="nav-item">
 <!--                       <a class="btn btn-primary" th:href="@{/users/{id}/view(id=${user.id})}">View Todos</a> -->
                 </li>
@@ -50,12 +53,11 @@ body {
      
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-<!--                     <a class="nav-link active" aria-current="page" th:href="@{/contact}">Contact</a> -->
-                </li>
+            
                   <li class="nav-item">
                      <a class="nav-link active" aria-current="page" th:href="@{/logout}">Logout</a>
                 </li>
+                  
             </ul>
         </div>
 </nav>

@@ -31,6 +31,8 @@ public class SpringSecurityConfig {
 	public static PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+	
 	    
 	    // configure SecurityFilterChain
 	    @Bean
@@ -47,6 +49,7 @@ public class SpringSecurityConfig {
 	                .requestMatchers("/login").hasAnyRole("USER","ADMIN")
 	                .requestMatchers("/users").hasAnyRole("USER","ADMIN")  
 	                .requestMatchers("/todos/**").hasRole("USER")
+	                .requestMatchers("/changePassword").hasRole("USER")
 	                .requestMatchers("/registration/**").permitAll()
 	                .requestMatchers("/todos/getAllTodos").hasAnyRole("USER","ADMIN")  
 	                .requestMatchers("/users/**").hasAnyRole("USER","ADMIN")  
