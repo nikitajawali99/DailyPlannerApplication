@@ -41,17 +41,17 @@ public class UserController {
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
-	
-	//@PreAuthorize("hasRole('USER')")
+
+	// @PreAuthorize("hasRole('USER')")
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/createNewUser")
-	public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody UserDto user,Model model) {
+	public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody UserDto user, Model model) {
 
 		Map<String, Object> response = new HashMap<>();
 		log.info("Entering into UserController :: createUser");
-		
-		response = userService.createUser(user,model);
-		
+
+		response = userService.createUser(user, model);
+
 		log.info("Exiting into UserController :: createUser");
 		return ResponseEntity.accepted().body(response);
 
@@ -62,9 +62,9 @@ public class UserController {
 	@GetMapping("/getUserById/{id}")
 	public ResponseEntity<UserDto> getUserById(@PathVariable("id") Long userId) {
 		log.info("Entering into UserController :: getUserById");
-		
+
 		UserDto user = userService.getUserById(userId);
-		
+
 		log.info("Exiting into UserController :: getUserById");
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
@@ -75,24 +75,12 @@ public class UserController {
 	@GetMapping("/getAllUsers")
 	public ResponseEntity<List<UserDto>> getAllUsers() {
 		log.info("Entering into UserController :: getAllUsers");
-		
+
 		List<UserDto> users = userService.getAllUsers();
-		
+
 		log.info("Exiting into UserController :: getAllUsers");
 		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
-
-//	// Build Update User REST API
-//	@Operation(summary = "Update User REST API", description = "Update User REST API is used to update a particular user in the database")
-//	@ApiResponse(responseCode = "200", description = "HTTP Status 200 SUCCESS")
-//	// http://localhost:8080/api/users/1
-//	@PutMapping("{id}")
-//	public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long userId, @RequestBody @Valid UserDto user) {
-//		user.setId(userId);
-//		UserDto updatedUser = userService.updateUser(user);
-//
-//		return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-//	}
 
 	@Operation(summary = "Delete User REST API", description = "Delete User REST API is used to delete a particular user from the database")
 	@ApiResponse(responseCode = "200", description = "HTTP Status 200 SUCCESS")

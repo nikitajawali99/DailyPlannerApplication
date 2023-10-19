@@ -1,6 +1,5 @@
 package com.dailyplanner.service.Impl;
 
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +34,13 @@ public class UserServiceImpl implements UserService {
 	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
 
-
 	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-			PasswordEncoder passwordEncoder,ModelMapper modelMapper) {
+			PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
-		this.modelMapper=modelMapper;
-		
+		this.modelMapper = modelMapper;
 	}
-
 
 	private final ModelMapper modelMapper;
 
@@ -59,12 +55,11 @@ public class UserServiceImpl implements UserService {
 			if (userDto.getId() == null) {
 				User optionalEmail = userRepository.findByEmail(userDto.getEmail());
 
-				if (optionalEmail!=null) {
-					
+				if (optionalEmail != null) {
+
 					isValid = false;
 					response.put(Constant.FAILED, 0);
 					response.put(Constant.MESSAGE, "Email-Id already exists :Already Registered ?");
-					
 
 				}
 			}
@@ -86,6 +81,7 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	private Map<String, Object> saveUser(UserDto userDto, Model model) {
+		log.info("Entering into UserServiceImpl :: saveUser");
 		Map<String, Object> response = new HashMap<>();
 		User user = modelMapper.map(userDto, User.class);
 
@@ -106,24 +102,24 @@ public class UserServiceImpl implements UserService {
 			getSuccess(model);
 
 		}
+		log.info("Exiting into UserServiceImpl :: saveUser");
 		return response;
 	}
 
 	private String getSuccess(Model model) {
 		return "register-success";
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	@Transactional
 	public UserDto getUserById(Long userId) {
+		log.info("Entering into UserServiceImpl :: getUserById");
 		User user = null;
 		try {
 
 			user = userRepository.findById(userId)
 					.orElseThrow(() -> new ResourceNotFoundException("User with ", "id :", userId));
-
+			log.info("Exiting into UserServiceImpl :: getUserById");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -146,33 +142,29 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto updateUser(UserDto user) {
-
+		log.info("Entering into UserServiceImpl :: updateUser");
 		User existingUser = userRepository.findById(user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("User", "id", user.getId()));
 
 		existingUser.setName(user.getFirstName());
-		
+
 		existingUser.setEmail(user.getEmail());
 		existingUser.setAddress(user.getAddress());
-	
-		
-		User updatedUser = userRepository.save(existingUser);
-  
 
+		User updatedUser = userRepository.save(existingUser);
+		log.info("Exiting into UserServiceImpl :: updateUser");
 		return modelMapper.map(updatedUser, UserDto.class);
 	}
 
 	@Override
 	public void deleteUser(Long userId) {
 		try {
+			log.info("Entering into UserServiceImpl :: deleteUser");
 			userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-			
-			//userRolesRepository.deleteById(userId);
+			// userRolesRepository.deleteById(userId);
 			userDelete(userId);
-			
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -182,9 +174,9 @@ public class UserServiceImpl implements UserService {
 	@Modifying
 	private void userDelete(Long userId) {
 		try {
-		
-		userRepository.deleteById(userId);
-		}catch (Exception e) {
+
+			userRepository.deleteById(userId);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -196,13 +188,13 @@ public class UserServiceImpl implements UserService {
 			log.info("Entering into UserServiceImpl :: saveUser");
 			User user = new User();
 			user.setName(userDto.getFirstName());
-		
+
 			user.setEmail(userDto.getEmail());
 			// encrypt the password using spring security
 			user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 			user.setConfirmPassword(passwordEncoder.encode(userDto.getConfirmPassword()));
 			user.setAddress(userDto.getAddress());
-		
+
 			user.setCreatedDate(new Date());
 			Role role = roleRepository.findByName("ROLE_USER");
 			if (role == null) {
@@ -212,10 +204,9 @@ public class UserServiceImpl implements UserService {
 			user.setRoles(Arrays.asList(role));
 			log.info("Exiting into UserServiceImpl :: saveUser");
 			userRepository.save(user);
-			
+
 			return user;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -233,6 +224,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private UserDto mapToUserDto(User user) {
+		log.info("Entering into UserServiceImpl :: mapToUserDto");
 		UserDto userDto = null;
 		try {
 			userDto = new UserDto();
@@ -241,15 +233,11 @@ public class UserServiceImpl implements UserService {
 			userDto.setEmail(user.getEmail());
 			userDto.setCreatedDate(user.getCreatedDate());
 			userDto.setAddress(user.getAddress());
-//			List<Todo> todoList = todoRepository.findUserId(userDto.getId());
-//			
-//			for (Todo todo : todoList) {
-//				userDto.setTitle(todo.getTitle());
-//			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		log.info("Exiting into UserServiceImpl :: mapToUserDto");
 		return userDto;
 	}
 
@@ -267,18 +255,18 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto getStudentById(Long id) {
+		log.info("Entering into UserServiceImpl :: getStudentById");
 		User userDto = userRepository.findById(id).get();
-		
+
 		UserDto savedUserDto = new UserDto();
-	
+
 		savedUserDto.setId(userDto.getId());
 		savedUserDto.setFirstName(userDto.getName());
 		savedUserDto.setEmail(userDto.getEmail());
 		savedUserDto.setAddress(userDto.getAddress());
 		savedUserDto.setPassword(userDto.getPassword());
 		savedUserDto.setConfirmPassword(userDto.getConfirmPassword());
-		//savedUserDto.setUserName(userDto.getUserName());
-		
+		log.info("Exiting into UserServiceImpl :: getStudentById");
 		return savedUserDto;
 	}
 }

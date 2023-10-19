@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -23,139 +25,112 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RegistrationCompleteEventListener implements ApplicationListener<RegistrationCompleteEvent> {
 
+	static Logger log = LoggerFactory.getLogger(RegistrationCompleteEventListener.class);
+
 	private final JavaMailSender mailSender;
 	private final VerificationTokenRepository tokenRepository;
 	private User user;
 
-//	public RegistrationCompleteEventListener(IVerificationTokenService tokenService, JavaMailSender mailSender
-//			) {
-//		this.tokenService = tokenService;
-//		this.mailSender = mailSender;
-//	}
-
 	@Transactional
 	@Override
 	public void onApplicationEvent(RegistrationCompleteEvent event) {
-		
-		  //1. get the user
-        user = event.getUser();
-        //2. generate a token for the user
-        String vToken = UUID.randomUUID().toString();
-        //3. save the token for the user
-        saveVerificationTokenForUser(user, vToken);
-        //4. Build the verification url
-        String url = event.getConfirmationUrl()+"/registration/verifyEmail?token="+vToken;
-        //5. send the email to the user
-		
-		
+
+		log.info("Entering into RegistrationCompleteEventListener :: onApplicationEvent");
+
+		// 1. get the user
+		user = event.getUser();
+		// 2. generate a token for the user
+		String vToken = UUID.randomUUID().toString();
+		// 3. save the token for the user
+		saveVerificationTokenForUser(user, vToken);
+		// 4. Build the verification url
+		String url = event.getConfirmationUrl() + "/registration/verifyEmail?token=" + vToken;
+		// 5. send the email to the user
+
+		log.info("Sending mail to the user :" + url);
 		try {
+			log.info("Entering into RegistrationCompleteEventListener :: Before sending mail");
 			sendVerificationEmail(url);
+			log.info("Exiting into RegistrationCompleteEventListener :: Before sending mail");
 		} catch (UnsupportedEncodingException | MessagingException e) {
 			throw new RuntimeException(e.getMessage());
 		}
 
 	}
-	
-	
 
 	@Transactional
 	private void saveVerificationTokenForUser(User user, String vToken) {
 
+		log.info("Entering into RegistrationCompleteEventListener :: saveVerificationTokenForUser");
 		Date currentDate = new Date();
 		var verificationToken = new VerificationToken(vToken, user, currentDate);
-
 		tokenRepository.save(verificationToken);
+		log.info("Exiting into RegistrationCompleteEventListener :: saveVerificationTokenForUser");
 	}
 
 	@Transactional
 	public void sendVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
 
+		log.info("Entering into RegistrationCompleteEventListener :: sendVerificationEmail");
+
 		String subject = "Email Verification | Daily Planner System ";
 		String senderName = "Daily Planner Service";
 
-//		String mailContent = " Hi, " + user.getName() + ", " + " Thank you for registering with us,  " + ""
-//				+ "Please, follow the link below to complete your registration." + "<a href=\"" + url
-//				+ "\">Verify your email to activate your account. </a>";
-		
-		String mailContent = " Hi " + user.getName() + ", " + " Thank you for registering with us.  " + ""
-				+ "\n" + "\n" + "Please, follow the link below to complete your registration : " + "" + url+ "\" "
-				+ "\n" + "\n" + "Verify your email to activate your account. ";
+		String mailContent = " Hi " + user.getName() + ", " + " Thank you for registering with us.  " + "" + "\n" + "\n"
+				+ "Please, follow the link below to complete your registration : " + "" + url + "\" " + "\n" + "\n"
+				+ "Verify your email to activate your account. ";
 
 		emailMessage(subject, senderName, mailContent, mailSender, user);
 
 	}
-	
-	public void sendPasswordResetVerificationEmail(String url, User user) throws MessagingException, UnsupportedEncodingException {
-      
-		
-		
+
+	public void sendPasswordResetVerificationEmail(String url, User user)
+			throws MessagingException, UnsupportedEncodingException {
+
+		log.info("Entering into RegistrationCompleteEventListener :: sendPasswordResetVerificationEmail");
 		String subject = "Password Reset Request Verification | Daily Planner System";
-        String senderName = "Daily Planner Service";
-//        String mailContent = "<p> Hi, "+ user.getName()+ ", </p>"+
-//                "<p><b>You recently requested to reset your password,</b>"+"" +
-//                "Please, follow the link below to complete the action.</p>"+
-//                "<a href=\"" +url+ "\">Reset password</a>"+
-//                "<p> Daily Planner Portal Service";
-//        
-//        String mailContent = "<p> Hi, "+  ", </p>"+
-//                "<p><b>You recently requested to reset your password,</b>"+"" +
-//                "Please, follow the link below to complete the action.</p>"+
-//                "<a href=\"" +url+ "\">Reset password</a>"+
-//                "<p> Daily Planner Portal Service";
-        
-        String mailContent = " Hi " + user.getName() + ", " + " You recently requested to reset your password,  " + ""
-				+ "\n" + "\n" + "Please, follow the link below to complete the action : " + "" + url+ "\" "
-				+ "\n" + "\n" + "Reset password. ";
-        
-        emailMessage(subject, senderName, mailContent, mailSender, user);
-    }
+		String senderName = "Daily Planner Service";
 
-	private static void emailMessage(String subject, String senderName, String mailContent,
-			JavaMailSender mailSender,
+		String mailContent = " Hi " + user.getName() + ", " + " You recently requested to reset your password,  " + ""
+				+ "\n" + "\n" + "Please, follow the link below to complete the action : " + "" + url + "\" " + "\n"
+				+ "\n" + "Reset password. ";
+
+		emailMessage(subject, senderName, mailContent, mailSender, user);
+
+		log.info("Exiting into RegistrationCompleteEventListener :: sendPasswordResetVerificationEmail");
+	}
+
+	private static void emailMessage(String subject, String senderName, String mailContent, JavaMailSender mailSender,
 			User theUser) throws MessagingException, UnsupportedEncodingException {
-		
+		log.info("Entering into RegistrationCompleteEventListener :: emailMessage");
 		try {
-			
+
 			final String username = "nikitajawali99@gmail.com";
-	        final String password = "rrai usmh clvs fwqu";
+			final String password = "rrai usmh clvs fwqu";
 
-	        Properties prop = new Properties();
+			Properties prop = new Properties();
 			prop.put("mail.smtp.host", "smtp.gmail.com");
-	        prop.put("mail.smtp.port", "587");
-	        prop.put("mail.smtp.auth", "true");
-	        prop.put("mail.smtp.starttls.enable", "true"); //TLS
-	        
-	        Session session = Session.getInstance(prop,
-	                new jakarta.mail.Authenticator() {
-	                    protected PasswordAuthentication getPasswordAuthentication() {
-	                        return new PasswordAuthentication(username, password);
-	                    }
-	                });
-			
-	        Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("from@gmail.com"));
-            message.setRecipients(
-                    Message.RecipientType.TO,
-                    InternetAddress.parse(theUser.getEmail())
-            );
-            message.setSubject(subject);
-            message.setText(mailContent);
+			prop.put("mail.smtp.port", "587");
+			prop.put("mail.smtp.auth", "true");
+			prop.put("mail.smtp.starttls.enable", "true"); // TLS
 
-            Transport.send(message);
-			
-			
-//		MimeMessage message = mailSender.createMimeMessage();
-//		MimeMessageHelper messageHelper = new MimeMessageHelper(message);
-//		
-//		
-//		messageHelper.setFrom("nikitajawali99@gmail.com", senderName);
-//		messageHelper.setTo(theUser.getEmail());
-//		messageHelper.setSubject(subject);
-//		messageHelper.setText(mailContent, true);
-//		
-//		mailSender.send(message);
-	
-		}catch (Exception e) {
+			Session session = Session.getInstance(prop, new jakarta.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(username, password);
+				}
+			});
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress("from@gmail.com"));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(theUser.getEmail()));
+			message.setSubject(subject);
+			message.setText(mailContent);
+
+			log.info("Entering into emailMessage :: before sending-mail");
+			Transport.send(message);
+			log.info("Exiting into emailMessage :: Mail send succesfully ::");
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 

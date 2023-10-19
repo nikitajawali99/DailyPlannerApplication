@@ -27,11 +27,11 @@ public class VerificationToken {
 	private String token;
 
 	private Date expirationTime;
-	
+
 	@OneToOne
-    @JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/mm/yyyy")
 	@Column(nullable = false)
 	private Date createdDate;
@@ -41,13 +41,13 @@ public class VerificationToken {
 		// TODO Auto-generated constructor stub
 	}
 
-	public VerificationToken(String token, User user,Date currentDate) {
+	public VerificationToken(String token, User user, Date currentDate) {
 		super();
 		this.token = token;
 		this.user = user;
-		this.createdDate=currentDate;
+		this.createdDate = currentDate;
 		this.expirationTime = TokenExpirationTime.getExpirationTime();
-		
+
 	}
 
 }

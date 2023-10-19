@@ -1,7 +1,8 @@
 package com.dailyplanner.service.Impl;
 
-
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.dailyplanner.dto.TodoDto;
 import com.dailyplanner.entity.Todo;
@@ -14,6 +15,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,12 +24,15 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@NoArgsConstructor
 public class TodoServiceImpl implements TodoService {
+
+	Logger log = LoggerFactory.getLogger(TodoServiceImpl.class);
 
 	private TodoRepository todoRepository;
 
 	private ModelMapper modelMapper;
-	
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -36,21 +41,15 @@ public class TodoServiceImpl implements TodoService {
 	public TodoDto addTodo(TodoDto todoDto) {
 
 		try {
+			log.info("Entering into TodoServiceImpl :: addTodo");
 			Todo todo = modelMapper.map(todoDto, Todo.class);
 			todo.setCreatedDate(new Date());
 
-			// Date firstDate = todo.getTargetDate();
-			// Date secondDate = todo.getCreatedDate();
-
-			// long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
-			// long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-			// todo.setRemainingDaysToComplete(diff);
-			
-			
-			
 			Todo savedTodo = todoRepository.save(todo);
 			TodoDto savedTodoDto = modelMapper.map(savedTodo, TodoDto.class);
+			log.info("Exiting into TodoServiceImpl :: addTodo");
 			return savedTodoDto;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -63,9 +62,10 @@ public class TodoServiceImpl implements TodoService {
 	public TodoDto getTodo(Long id) {
 
 		try {
+			log.info("Entering into TodoServiceImpl :: getTodo");
 			Todo todo = todoRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("Todo not found with id:" + id));
-
+			log.info("Exiting into TodoServiceImpl :: getTodo");
 			return modelMapper.map(todo, TodoDto.class);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -78,8 +78,9 @@ public class TodoServiceImpl implements TodoService {
 	public List<TodoDto> getAllTodos() {
 		List<Todo> todos = null;
 		try {
+			log.info("Entering into TodoServiceImpl :: getAllTodos");
 			todos = todoRepository.findAll();
-
+			log.info("Exiting into TodoServiceImpl :: getAllTodos");
 			return todos.stream().map((todo) -> modelMapper.map(todo, TodoDto.class)).collect(Collectors.toList());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -89,9 +90,7 @@ public class TodoServiceImpl implements TodoService {
 
 	@Override
 	public TodoDto updateTodo(TodoDto todoDto, Long id) {
-		
-	
-
+		log.info("Entering into TodoServiceImpl :: updateTodo");
 		Todo todo = todoRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Todo not found with id : " + id));
 		todo.setTitle(todoDto.getTitle());
@@ -99,19 +98,20 @@ public class TodoServiceImpl implements TodoService {
 		todo.setCompleted(todoDto.isCompleted());
 		todo.setTargetDate(todoDto.getTargetDate());
 		Todo updatedTodo = todoRepository.save(todo);
-
+		log.info("Exiting into TodoServiceImpl :: updateTodo");
 		return modelMapper.map(updatedTodo, TodoDto.class);
 	}
 
 	@Override
 	@Transactional
 	public void deleteTodo(Long id) {
-
+		log.info("Entering into TodoServiceImpl :: deleteTodo");
 		try {
 			todoRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("Todo not found with id : " + id));
 
 			todoRepository.deleteById(id);
+			log.info("Exiting into TodoServiceImpl :: deleteTodo");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -148,59 +148,59 @@ public class TodoServiceImpl implements TodoService {
 	@Override
 	@Transactional
 	public List<TodoDto> getUserTodoById(Long id) {
-		
+
+		log.info("Entering into TodoServiceImpl :: getUserTodoById");
 		List<TodoDto> todoDtoList = null;
 		TodoDto todoDto = null;
-		
 
 		StringBuilder sqlQuery = new StringBuilder(
-				"SELECT t.id,t.title,t.description,t.created_date,t.target_date FROM user_management.todos t left join users u " + " on t.users_id=u.id where u.id=:id");
+				"SELECT t.id,t.title,t.description,t.created_date,t.target_date FROM user_management.todos t left join users u "
+						+ " on t.users_id=u.id where u.id=:id");
 
 		Query query = entityManager.createNativeQuery(sqlQuery.toString());
-		
+
 		query.setParameter("id", id);
-		
-			try {
-				
+
+		try {
+
 			List<Object[]> obj = query.getResultList();
 			todoDtoList = new ArrayList<>();
-			
-			if(!obj.isEmpty()) {
-		
+
+			if (!obj.isEmpty()) {
+
 				for (Object[] record : obj) {
-					
+
 					todoDto = new TodoDto();
 					todoDto.setUserId(Long.parseLong(String.valueOf(record[0])));
 					todoDto.setTitle(String.valueOf(record[1]));
 					todoDto.setDescription(String.valueOf(record[2]));
-					todoDto.setCreatedDate((Date)record[3]);
-					todoDto.setTargetDate((Date)record[4]);
+					todoDto.setCreatedDate((Date) record[3]);
+					todoDto.setTargetDate((Date) record[4]);
 					todoDtoList.add(todoDto);
 				}
-				
+
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-			return todoDtoList;
-		
+		log.info("Exiting into TodoServiceImpl :: getUserTodoById");
+		return todoDtoList;
+
 	}
 
 	@Override
 	@Transactional
 	public TodoDto updateTodoById(Long id) {
-		
-       Todo userDto = todoRepository.findById(id).get();
-		
-        TodoDto savedUserDto = new TodoDto();
+		log.info("Entering into TodoServiceImpl :: updateTodoById");
+		Todo userDto = todoRepository.findById(id).get();
+
+		TodoDto savedUserDto = new TodoDto();
 		savedUserDto.setId(userDto.getId());
 		savedUserDto.setTitle(userDto.getTitle());
 		savedUserDto.setDescription(userDto.getDescription());
 		savedUserDto.setTargetDate(userDto.getTargetDate());
-		
-		
+		log.info("Exiting into TodoServiceImpl :: updateTodoById");
 		return savedUserDto;
 	}
 }

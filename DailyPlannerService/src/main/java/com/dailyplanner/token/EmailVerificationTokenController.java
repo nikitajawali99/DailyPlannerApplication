@@ -1,10 +1,10 @@
 package com.dailyplanner.token;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.context.ApplicationEventPublisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,36 +15,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dailyplanner.dto.UserDto;
 import com.dailyplanner.entity.User;
-import com.dailyplanner.event.RegistrationCompleteEvent;
 import com.dailyplanner.event.RegistrationCompleteEventListener;
 import com.dailyplanner.password.IPasswordResetTokenService;
-import com.dailyplanner.repository.ContactRepository;
 import com.dailyplanner.repository.UserRepository;
-import com.dailyplanner.service.UserService;
 import com.dailyplanner.utils.UrlUtil;
 
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/registration")
 public class EmailVerificationTokenController {
 
-	private UserService userService;
-	private final ContactRepository contactRepository;
-	private final ApplicationEventPublisher publisher;
+	Logger log = LoggerFactory.getLogger(EmailVerificationTokenController.class);
+
 	private final IVerificationTokenService tokenService;
 	private final IPasswordResetTokenService passwordResetTokenService;
 	private final RegistrationCompleteEventListener eventListener;
 	private final UserRepository userRepository;
 
-	public EmailVerificationTokenController(UserService userService, ContactRepository contactRepository,
-			ApplicationEventPublisher publisher, IVerificationTokenService tokenService,
+	public EmailVerificationTokenController(IVerificationTokenService tokenService,
 			IPasswordResetTokenService passwordResetTokenService, RegistrationCompleteEventListener eventListener,
 			UserRepository userRepository) {
-		this.userService = userService;
-		this.contactRepository = contactRepository;
-		this.publisher = publisher;
+
 		this.tokenService = tokenService;
 		this.passwordResetTokenService = passwordResetTokenService;
 		this.eventListener = eventListener;
@@ -53,25 +45,30 @@ public class EmailVerificationTokenController {
 	}
 
 	/// registration/verifyEmail?token
-
 	@GetMapping("/verifyEmail")
 	public String verifyEmail(@RequestParam("token") String token) {
 
+		log.info("Entering into EmailVerificationTokenController :: verifyEmail");
 		Optional<VerificationToken> theToken = tokenService.findByToken(token);
 
 		char tokenResult = theToken.get().getUser().getEnabled();
 
 		if (theToken.isPresent() && tokenResult == '1') {
+			log.info("Entering into EmailVerificationTokenController :: already verified");
 			return "redirect:/login?verified";
 		}
 
 		String verificationResult = tokenService.validateToken(token);
 		switch (verificationResult.toLowerCase()) {
 		case "expired":
+			log.info("Entering into EmailVerificationTokenController :: expired");
 			return "redirect:/error?expired";
+
 		case "valid":
+			log.info("Entering into EmailVerificationTokenController :: valid");
 			return "redirect:/login?valid";
 		default:
+			log.info("Entering into EmailVerificationTokenController :: default");
 			return "redirect:/error?invalid";
 		}
 
@@ -79,10 +76,10 @@ public class EmailVerificationTokenController {
 
 	@GetMapping("/forgot-password-request")
 	public String forgotPasswordForm(Model model) {
-
+		log.info("Entering into EmailVerificationTokenController :: forgotPasswordForm");
 		UserDto user = new UserDto();
 		model.addAttribute("user", user);
-
+		log.info("Exiting into EmailVerificationTokenController :: forgotPasswordForm");
 		return "forgot-password-form";
 	}
 
@@ -115,7 +112,6 @@ public class EmailVerificationTokenController {
 				return "redirect:/error?mismatch_password";
 			}
 
-			// return "redirect:/login?reset_success";
 		}
 		return "redirect:/login?reset_success";
 	}
@@ -124,6 +120,7 @@ public class EmailVerificationTokenController {
 	public String resetPasswordRequest(HttpServletRequest request, Model model,
 			@ModelAttribute("user") UserDto userDto) {
 
+		log.info("Entering into EmailVerificationTokenController :: resetPasswordRequest");
 		String email = request.getParameter("email");
 		User user = userRepository.findByEmail(email);
 
@@ -136,18 +133,16 @@ public class EmailVerificationTokenController {
 		// send password reset verification email to the user
 		String url = UrlUtil.getApplicationUrl(request) + "/password-reset-form?token=" + passwordResetToken;
 
+		log.info("Sending Url:" + url);
 		try {
-
+			log.info("Entering into EmailVerificationTokenController :: sendPasswordResetVerificationEmail");
 			eventListener.sendPasswordResetVerificationEmail(url, user);
-
-			// publisher.publishEvent(new RegistrationCompleteEvent(user,
-			// UrlUtil.getApplicationUrl(request)));
-
+			log.info("Exiting into EmailVerificationTokenController :: sendPasswordResetVerificationEmail");
 		} catch (Exception e) {
 			model.addAttribute("error", e.getMessage());
 			e.printStackTrace();
 		}
-
+		log.info("Exiting into EmailVerificationTokenController :: resetPasswordRequest");
 		return "redirect:/registration/forgot-password-request?success";
 	}
 

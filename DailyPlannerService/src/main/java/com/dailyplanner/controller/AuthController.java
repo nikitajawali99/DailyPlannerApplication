@@ -1,8 +1,6 @@
 package com.dailyplanner.controller;
 
 import java.security.Principal;
-import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -10,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,12 +17,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import com.dailyplanner.controller.AuthController;
-import com.dailyplanner.dto.ContactDto;
 import com.dailyplanner.dto.TodoDto;
 import com.dailyplanner.dto.UserDto;
-import com.dailyplanner.entity.Contact;
 import com.dailyplanner.entity.User;
 import com.dailyplanner.repository.UserRepository;
 import com.dailyplanner.repository.UserRolesRepository;
@@ -48,15 +42,14 @@ public class AuthController {
 	private UserRolesRepository userRolesRepository;
 	private final PasswordEncoder passwordEncoder;
 
-
 	public AuthController(UserService userService, TodoService todoService, UserDetailsService userDetailsService,
-			UserRepository userRepository, UserRolesRepository userRolesRepository,PasswordEncoder passwordEncoder) {
+			UserRepository userRepository, UserRolesRepository userRolesRepository, PasswordEncoder passwordEncoder) {
 		this.userService = userService;
 		this.todoService = todoService;
 		this.userDetailsService = userDetailsService;
 		this.userRepository = userRepository;
 		this.userRolesRepository = userRolesRepository;
-		this.passwordEncoder=passwordEncoder;
+		this.passwordEncoder = passwordEncoder;
 
 	}
 
@@ -69,7 +62,7 @@ public class AuthController {
 
 		User user = userService.findUserByEmail(userDetails.getUsername());
 
-		if(user == null) {
+		if (user == null) {
 			return "redirect:/error?invalid";
 		}
 		model.addAttribute("user", user);
@@ -182,11 +175,13 @@ public class AuthController {
 			}
 
 			if (result.hasErrors()) {
-
+				log.info("Entering into updateStudent :: errors");
 				model.addAttribute("user", userDto);
 				return "edit-user";
 			} else {
+				log.info("Entering into updateStudent :: updateUser");
 				userService.updateUser(userDto);
+				log.info("Exiting into updateStudent :: updateUser");
 			}
 
 			Long roleId = userRolesRepository.findRoleId(id);
@@ -210,36 +205,33 @@ public class AuthController {
 		log.info("Exiting into AuthController :: deleteUser");
 		return "redirect:/users";
 	}
-	
+
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/change-password")
 	public String changePassword(Model model, Principal principal) {
 
-		log.info("Entering into AuthController :: userView");
+		log.info("Entering into AuthController :: changePassword");
 		UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-	
+
 		User user = userService.findUserByEmail(userDetails.getUsername());
 
-		if(user == null) {
+		if (user == null) {
 			return "redirect:/error?invalid";
 		}
 		model.addAttribute("user", user);
-		log.info("Exiting into AuthController :: userView");
+		log.info("Exiting into AuthController :: changePassword");
 		return "change-password";
 	}
-	
-
 
 	@PostMapping("/changepassword/save")
 	public String changePasswordSave(@Valid @ModelAttribute("user") User user, BindingResult result, Model model,
 			Principal principal) {
 
 		try {
+			log.info("Entering into AuthController :: changePasswordSave");
 			UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
 
 			User existingUser = userService.findUserByEmail(userDetails.getUsername());
-
-			log.info("Entering into LoginRegisterationController :: contactSave");
 
 			if (user.getConfirmPassword() == "") {
 				result.rejectValue("confirmPassword", null, "Confirm Password cannot be null");
@@ -260,12 +252,13 @@ public class AuthController {
 				model.addAttribute("user", user);
 				return "/change-password";
 			} else {
-
+				log.info("Entering into changePasswordSave :: updating-password");
 				existingUser.setId(existingUser.getId());
 				existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
 				existingUser.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
 
 				userRepository.save(existingUser);
+				log.info("Exiting into changePasswordSave :: updating-password");
 				return "redirect:/change-password?success";
 			}
 
@@ -273,11 +266,9 @@ public class AuthController {
 
 			e.printStackTrace();
 		}
+		log.info("Exiting into AuthController :: changePasswordSave");
 		return null;
 
 	}
-	 
-	
-	
 
 }
