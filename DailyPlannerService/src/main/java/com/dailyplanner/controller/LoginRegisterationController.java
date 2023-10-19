@@ -52,6 +52,12 @@ public class LoginRegisterationController {
 		log.info("Entering into LoginRegisterationController :: index");
 		return "index";
 	}
+	
+	@GetMapping("/about")
+	public String about() {
+		log.info("Entering into LoginRegisterationController :: about");
+		return "about";
+	}
 
 	@GetMapping("/error")
 	public String error() {
