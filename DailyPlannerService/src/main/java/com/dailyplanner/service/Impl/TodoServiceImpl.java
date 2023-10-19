@@ -24,10 +24,9 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@NoArgsConstructor
 public class TodoServiceImpl implements TodoService {
 
-	Logger log = LoggerFactory.getLogger(TodoServiceImpl.class);
+	//Logger log = LoggerFactory.getLogger(TodoServiceImpl.class);
 
 	private TodoRepository todoRepository;
 
@@ -41,13 +40,13 @@ public class TodoServiceImpl implements TodoService {
 	public TodoDto addTodo(TodoDto todoDto) {
 
 		try {
-			log.info("Entering into TodoServiceImpl :: addTodo");
+			//log.info("Entering into TodoServiceImpl :: addTodo");
 			Todo todo = modelMapper.map(todoDto, Todo.class);
 			todo.setCreatedDate(new Date());
 
 			Todo savedTodo = todoRepository.save(todo);
 			TodoDto savedTodoDto = modelMapper.map(savedTodo, TodoDto.class);
-			log.info("Exiting into TodoServiceImpl :: addTodo");
+			//log.info("Exiting into TodoServiceImpl :: addTodo");
 			return savedTodoDto;
 
 		} catch (Exception e) {
@@ -62,10 +61,10 @@ public class TodoServiceImpl implements TodoService {
 	public TodoDto getTodo(Long id) {
 
 		try {
-			log.info("Entering into TodoServiceImpl :: getTodo");
+			//log.info("Entering into TodoServiceImpl :: getTodo");
 			Todo todo = todoRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("Todo not found with id:" + id));
-			log.info("Exiting into TodoServiceImpl :: getTodo");
+			//log.info("Exiting into TodoServiceImpl :: getTodo");
 			return modelMapper.map(todo, TodoDto.class);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -78,9 +77,9 @@ public class TodoServiceImpl implements TodoService {
 	public List<TodoDto> getAllTodos() {
 		List<Todo> todos = null;
 		try {
-			log.info("Entering into TodoServiceImpl :: getAllTodos");
+			//log.info("Entering into TodoServiceImpl :: getAllTodos");
 			todos = todoRepository.findAll();
-			log.info("Exiting into TodoServiceImpl :: getAllTodos");
+			//log.info("Exiting into TodoServiceImpl :: getAllTodos");
 			return todos.stream().map((todo) -> modelMapper.map(todo, TodoDto.class)).collect(Collectors.toList());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,7 +89,7 @@ public class TodoServiceImpl implements TodoService {
 
 	@Override
 	public TodoDto updateTodo(TodoDto todoDto, Long id) {
-		log.info("Entering into TodoServiceImpl :: updateTodo");
+		//log.info("Entering into TodoServiceImpl :: updateTodo");
 		Todo todo = todoRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Todo not found with id : " + id));
 		todo.setTitle(todoDto.getTitle());
@@ -98,20 +97,20 @@ public class TodoServiceImpl implements TodoService {
 		todo.setCompleted(todoDto.isCompleted());
 		todo.setTargetDate(todoDto.getTargetDate());
 		Todo updatedTodo = todoRepository.save(todo);
-		log.info("Exiting into TodoServiceImpl :: updateTodo");
+		//log.info("Exiting into TodoServiceImpl :: updateTodo");
 		return modelMapper.map(updatedTodo, TodoDto.class);
 	}
 
 	@Override
 	@Transactional
 	public void deleteTodo(Long id) {
-		log.info("Entering into TodoServiceImpl :: deleteTodo");
+		//log.info("Entering into TodoServiceImpl :: deleteTodo");
 		try {
 			todoRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("Todo not found with id : " + id));
 
 			todoRepository.deleteById(id);
-			log.info("Exiting into TodoServiceImpl :: deleteTodo");
+			//log.info("Exiting into TodoServiceImpl :: deleteTodo");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -149,7 +148,7 @@ public class TodoServiceImpl implements TodoService {
 	@Transactional
 	public List<TodoDto> getUserTodoById(Long id) {
 
-		log.info("Entering into TodoServiceImpl :: getUserTodoById");
+		//log.info("Entering into TodoServiceImpl :: getUserTodoById");
 		List<TodoDto> todoDtoList = null;
 		TodoDto todoDto = null;
 
@@ -184,7 +183,7 @@ public class TodoServiceImpl implements TodoService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("Exiting into TodoServiceImpl :: getUserTodoById");
+		//log.info("Exiting into TodoServiceImpl :: getUserTodoById");
 		return todoDtoList;
 
 	}
@@ -192,7 +191,7 @@ public class TodoServiceImpl implements TodoService {
 	@Override
 	@Transactional
 	public TodoDto updateTodoById(Long id) {
-		log.info("Entering into TodoServiceImpl :: updateTodoById");
+		//log.info("Entering into TodoServiceImpl :: updateTodoById");
 		Todo userDto = todoRepository.findById(id).get();
 
 		TodoDto savedUserDto = new TodoDto();
@@ -200,7 +199,7 @@ public class TodoServiceImpl implements TodoService {
 		savedUserDto.setTitle(userDto.getTitle());
 		savedUserDto.setDescription(userDto.getDescription());
 		savedUserDto.setTargetDate(userDto.getTargetDate());
-		log.info("Exiting into TodoServiceImpl :: updateTodoById");
+		//log.info("Exiting into TodoServiceImpl :: updateTodoById");
 		return savedUserDto;
 	}
 }

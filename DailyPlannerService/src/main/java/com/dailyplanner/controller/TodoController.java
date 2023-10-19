@@ -1,6 +1,7 @@
 package com.dailyplanner.controller;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -79,6 +80,12 @@ public class TodoController {
 			Principal principal) {
 		try {
 			log.info("Entering into TodoController :: todo");
+
+			Date dateObj = new Date();
+
+			if (todoDto.getTargetDate().before(dateObj)) {
+				result.rejectValue("targetDate", null, "Target date can't be less than today or can't be today");
+			}
 
 			if (result.hasErrors()) {
 				model.addAttribute("user", todoDto);
