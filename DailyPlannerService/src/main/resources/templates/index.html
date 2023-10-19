@@ -1,103 +1,110 @@
 <!DOCTYPE html>
-<html lang="en"
-    xmlns:th="http://www.thymeleaf.org"
->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Home | Daily Planner System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-          crossorigin="anonymous">
+	<meta charset="UTF-8">
+	<title>Home | Daily Planner System</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 
 <style>
-#firstname {
-  background-color: #f5f5dc;
-}
+	#firstname {
+		background-color: #f5f5dc;
+	}
 
-body {
-  background-image: linear-gradient(pink, hsl(300, 76%, 72%), pink);
-  }
+	body {
+		background-color: #86B3D1
+	}
 </style>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/index}">Daily Planner System</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{/register}">Register</a>
-                </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{/login}">Login</a>
-                </li>
-                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{/about}">About</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    
-      <div class="collapse navbar-collapse" id="navbarSupportedContent"> 
-             <ul class="navbar-nav me-auto mb-2 mb-lg-0"> 
-                 <li class="nav-item"> 
-                    <a class="nav-link active" aria-current="page" th:href="@{/contact}">Contact</a> 
-                 </li> 
-             </ul> 
-      </div>
-        
-        
-</nav>
-<br /><br />
-<div class="container">
-    <div class="row">
-        <h1 class="text-center"> Daily Planner System </h1>
-    </div>
-    <br>
-    <br>
-     <div class="row" >
-        <h1 class="text-center" id="firstname" ><i> Welcome to daily planner for keeping track of your daily schedule </i> </h1>
-    </div>
-     <br>
-     <br>
-    <div class="row">
-        <h1 class="text-center"> We are here to save your daily todo list </h1>
-    </div>
-     <br>
-     <br>
-    <div class="row">
-        <h1 class="text-center"> TO ACCESS, PLEASE REGISTER !! </h1>
-    </div>
-</div>
-<br>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container-fluid">
+			<a class="navbar-brand" th:href="@{/index}" style="color: #F78888;"><b>Daily Planner System</b></a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+				data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" th:href="@{/register}"><b>Register</b></a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" th:href="@{/login}"><b>Login</b></a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" th:href="@{/about}"><b>About</b></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<li class="nav-item">
+					<a class="nav-link active" aria-current="page" th:href="@{/contact}"><b>Contact</b></a>
+				</li>
+			</ul>
+		</div>
+
+
+	</nav>
+	<br /><br />
+	<div class="container">
+		<!--    <div class="row">-->
+		<!--        <h1 class="text-center" style="font-weight: 400;font-style: italic;font-family: cursive;color: peachpuff;"> <u>Daily Planner System</u> </h1>-->
+		<!--    </div>-->
+		<br>
+		<br>
+		<div class="customer">
+			<h1 class="customer-text"
+				style="font-family: monospace;text-align: justify;padding: 0.8rem 1.6rem;color: #AC3B61;">!! Welcome to
+				daily planner for keeping track of your daily tasks !!</h1>
+		</div>
+
+		<div class="customer">
+			<h1 class="customer-text"
+				style="font-family: monospace;text-align: justify;padding: 0.8rem 1.6rem;color: #AC3B61;">We are here to
+				save your daily todo list. </h1>
+		</div>
+		<br>
+		<br>
+		<div class="customer">
+			<h1 class="customer-text"
+				style="font-family: monospace;text-align: center;padding: 0.8rem 1.6rem;color: #123C69;">TO ACCESS,
+				PLEASE REGISTER !! </h1>
+		</div>
+	</div>
+	<br>
+
+
 	<footer class="footer-distributed">
 
 		<div class="footer-right">
 			<center>
-				<p class="footer-company-about">
+				<p class="footer-company-about" style="color: floralwhite;font-family: monospace;">
 
 					<strong>Become focused, organized, and calm with Daily
-						Planner.</strong> <br>The world’s #1 task manager and to-do list app
+						Planner</strong> <br>The world’s #1 task manager and to-do list app
 
 				</p>
 			</center>
 		</div>
-		
-			<div class="footer-left">
+
+		<div class="footer-left">
 
 			<center>
-				<p class="footer-company-name">
+				<p class="footer-company-name" style="color: floralwhite;font-family: monospace;">
 					Copyright © 2023 <strong>Nikita Jawali. </strong>All rights reserved
 				</p>
 			</center>
 		</div>
-		
+
 	</footer>
 
 </body>
+
 </html>
