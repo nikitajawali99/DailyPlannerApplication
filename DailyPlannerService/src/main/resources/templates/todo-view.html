@@ -16,6 +16,10 @@
 			color: white;
 			text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
 		}
+
+		body {
+			background-color: #86B3D1
+		}
 	</style>
 
 </head>
@@ -50,26 +54,26 @@
 		<br>
 		<br>
 		<div class="table-responsive">
-		<table class="table table-bordered table-hover">
-			<thead class="table-dark">
-				<tr>
-					<th>Title</th>
-					<th>Description</th>
-					<th>Created Date</th>
-					<th>Target Date</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="user : ${users}">
+			<table class="table table-bordered table-hover" style="background-color: floralwhite;">
+				<thead class="table-dark">
+					<tr>
+						<th>Title</th>
+						<th>Description</th>
+						<th>Created Date</th>
+						<th>Target Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${users}">
 
-					<td th:text="${user.title}"></td>
-					<td th:text="${user.description}"></td>
-					<td th:text="${user.createdDate}"></td>
-					<td th:text="${user.targetDate}"></td>
+						<td th:text="${user.title}"></td>
+						<td th:text="${user.description}"></td>
+						<td th:text="${user.createdDate}"></td>
+						<td th:text="${user.targetDate}"></td>
 
-				</tr>
-			</tbody>
-		</table>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 
