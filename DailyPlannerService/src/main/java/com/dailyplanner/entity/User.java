@@ -2,6 +2,8 @@ package com.dailyplanner.entity;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class User {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/mm/yyyy")
 	@Column(nullable = false)
-	private Date createdDate;
+	private LocalDate createdDate;
 
 	private char enabled;
 
@@ -97,11 +99,11 @@ public class User {
 		this.address = address;
 	}
 
-	public Date getCreatedDate() {
+	public LocalDate getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate(LocalDate createdDate) {
 		this.createdDate = createdDate;
 	}
 

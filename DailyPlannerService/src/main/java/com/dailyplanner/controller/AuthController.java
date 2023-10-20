@@ -1,6 +1,7 @@
 package com.dailyplanner.controller;
 
 import java.security.Principal;
+import java.text.ParseException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class AuthController {
 
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/user-view")
-	public String userView(Model model, Principal principal) {
+	public String userView(Model model, Principal principal) throws ParseException {
 
 		log.info("Entering into AuthController :: userView");
 		UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -65,6 +66,15 @@ public class AuthController {
 		if (user == null) {
 			return "redirect:/error?invalid";
 		}
+		
+		//Date date = new Date();  
+//	    SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");  
+//	    String strDate = formatter.format(user.getCreatedDate());  
+//	    Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(strDate);  
+//	    
+//	    System.out.println("Date format :"+date1);
+//	    
+//		user.setCreatedDate(date1);
 		model.addAttribute("user", user);
 		log.info("Exiting into AuthController :: userView");
 		return "user-view";

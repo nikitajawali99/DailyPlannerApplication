@@ -18,6 +18,9 @@ import com.dailyplanner.repository.UserRepository;
 import com.dailyplanner.service.UserService;
 
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -89,8 +92,10 @@ public class UserServiceImpl implements UserService {
 			response.put(Constant.FAILED, 0);
 			response.put(Constant.MESSAGE, "Password and Confirm Password are not same");
 		} else {
+			Date date = new Date();
+			LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-			user.setCreatedDate(new Date());
+			user.setCreatedDate(localDate);
 			User savedUser = userRepository.save(user);
 
 			UserDto savedUserDto = modelMapper.map(savedUser, UserDto.class);
@@ -195,7 +200,10 @@ public class UserServiceImpl implements UserService {
 			user.setConfirmPassword(passwordEncoder.encode(userDto.getConfirmPassword()));
 			user.setAddress(userDto.getAddress());
 
-			user.setCreatedDate(new Date());
+			Date date = new Date();
+			LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+			user.setCreatedDate(localDate);
 			Role role = roleRepository.findByName("ROLE_USER");
 			if (role == null) {
 				role = checkRoleExist();
@@ -231,7 +239,11 @@ public class UserServiceImpl implements UserService {
 			userDto.setId(user.getId());
 			userDto.setFirstName(user.getName());
 			userDto.setEmail(user.getEmail());
-			userDto.setCreatedDate(user.getCreatedDate());
+			Date date = new Date();
+			// LocalDate localDate =
+			// date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+			userDto.setCreatedDate(date);
 			userDto.setAddress(user.getAddress());
 
 		} catch (Exception e) {
