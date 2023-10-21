@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Home | Daily Planner System</title>
+	<title>About us | Daily Planner System</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
 		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -14,11 +14,11 @@
 
 <style>
 	#firstname {
-		background-color: #f5f5dc;
-	}
 
-	body {
-		background-color: #86B3D1
+		text-align: center;
+		font-family: monospace;
+		font-size: 20px;
+		color: #4D6D9A;
 	}
 
 	#footer {
@@ -29,12 +29,18 @@
 		/* Height of the footer*/
 		height: 80px;
 	}
+
+
+	body {
+		background-color: #86B3D1
+	}
 </style>
 
 <body>
+
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
-			<a class="navbar-brand" th:href="@{/index}" style="color: whitesmoke;"><b>Daily Planner System</b></a>
+			<a class="navbar-brand" th:href="@{/index}" style="color: white;"><b>Daily Planner System</b></a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
 				aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
 				style="color: ghostwhite;">
@@ -48,9 +54,7 @@
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" th:href="@{/login}">Login</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" th:href="@{/about}">About</a>
-					</li>
+
 				</ul>
 			</div>
 		</div>
@@ -63,36 +67,42 @@
 				</li>
 			</ul>
 		</div>
-
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<li class="nav-item">
+					<a class="nav-link active" aria-current="page" th:href="@{/logout}">Logout</a>
+				</li>
+			</ul>
+		</div>
 
 
 	</nav>
-	<br /><br />
-	<div class="container">
 
-		<br>
-		<br>
-		<div class="customer">
-			<h1 class="customer-text"
-				style="font-family: monospace;text-align: justify;padding: 0.8rem 1.6rem;color: #AC3B61;">!! Welcome to
-				daily planner for keeping track of your daily tasks !!</h1>
-		</div>
-
-		<div class="customer">
-			<h1 class="customer-text"
-				style="font-family: monospace;text-align: justify;padding: 0.8rem 1.6rem;color: #AC3B61;">We are here to
-				save your daily todo list. </h1>
-		</div>
-		<br>
-		<br>
-		<div class="customer">
-			<h1 class="customer-text"
-				style="font-family: monospace;text-align: center;padding: 0.8rem 1.6rem;color: #123C69;">TO ACCESS,
-				PLEASE REGISTER !! </h1>
-		</div>
-	</div>
 	<br>
 
+
+	<h1 style="text-align: center;text-decoration: wavy;font-family: monospace;color: peachpuff;"><u>!! ABOUT ME !! </u>
+	</h1>
+
+	<br><br>
+	<p id="firstname">Dedicated developer and open-source contributor with more than 2 years' experience in the IT
+		industry.</p>
+	<p id="firstname">Essentially, this website was created so that daily/upcoming tasks can be accomplished without
+		tension and worry.
+	</p>
+	<p id="firstname">Our website is free, non-sponsored, and created for those who are busy!!</p>
+	<p id="firstname">I am looking forward to interacting with all of you.</p>
+
+	<br>
+	<br>
+	<marquee style="color: red;" bgcolor="white">Connect with me on LinkedIn -
+		https://www.linkedin.com/in/nikita-jawali-599260193/ and GitHub -
+		https://github.com/nikitajawali99 and via email - nikitajawali99@gmail.com.</marquee>
+
+
+	<br>
+	<br>
+	<br>
 	<div id="footer">
 		<footer class="footer-distributed">
 
@@ -101,7 +111,7 @@
 					<p class="footer-company-about" style="color: black;font-family: monospace;">
 
 						<strong>Become focused, organized, and calm with Daily
-							Planner</strong> <br>The world’s #1 task manager and to-do list app
+							Planner.</strong> <br>The world’s #1 task manager and to-do list app
 
 					</p>
 				</center>
@@ -110,7 +120,8 @@
 			<div class="footer-left">
 
 				<center>
-					<p class="footer-company-name" style="color: black;font-family: monospace;">
+					<p class="footer-company-about" style="color: black;font-family: monospace;">
+
 						Copyright © 2023 <strong>Nikita Jawali. </strong>All rights reserved
 					</p>
 				</center>

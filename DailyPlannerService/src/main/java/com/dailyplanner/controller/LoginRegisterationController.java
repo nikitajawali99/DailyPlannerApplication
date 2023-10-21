@@ -38,8 +38,7 @@ public class LoginRegisterationController {
 	private final IPasswordResetTokenService passwordResetTokenService;
 
 	public LoginRegisterationController(UserService userService, ContactRepository contactRepository,
-			ApplicationEventPublisher publisher,
-			IPasswordResetTokenService passwordResetTokenService) {
+			ApplicationEventPublisher publisher, IPasswordResetTokenService passwordResetTokenService) {
 		this.userService = userService;
 		this.contactRepository = contactRepository;
 		this.publisher = publisher;
@@ -51,6 +50,12 @@ public class LoginRegisterationController {
 	public String home() {
 		log.info("Entering into LoginRegisterationController :: index");
 		return "index";
+	}
+
+	@GetMapping("/about")
+	public String about() {
+		log.info("Entering into LoginRegisterationController :: about");
+		return "about";
 	}
 
 	@GetMapping("/error")
@@ -149,7 +154,6 @@ public class LoginRegisterationController {
 			else {
 				User user = userService.saveUser(userDto);
 
-	
 				// publish verification-email event
 				publisher.publishEvent(new RegistrationCompleteEvent(user, UrlUtil.getApplicationUrl(request)));
 
@@ -163,37 +167,38 @@ public class LoginRegisterationController {
 		return null;
 	}
 
-
-
 	@GetMapping("/password-reset-form")
 	public String passwordResetForm(@RequestParam("token") String token, Model model) {
+		log.info("Entering into LoginRegisterationController :: passwordResetForm");
 		model.addAttribute("token", token);
 		return "password-reset-form";
 	}
-	
-	 @PostMapping("/reset-password")
-	    public String resetPassword(HttpServletRequest request){
-	        String theToken = request.getParameter("token");
-	        String password = request.getParameter("password");
-	        String confirmpassword = request.getParameter("confirmPassword");
-	        
-	        
-	        if(!password.equals(confirmpassword)) {
-	        	 return "redirect:/error?mismatch_password";
-	        	
-	        }
-	        
-	        String tokenVerificationResult = passwordResetTokenService.validatePasswordResetToken(theToken);
-	        if (!tokenVerificationResult.equalsIgnoreCase("valid")){
-	            return "redirect:/error?invalid_token";
-	        }
-	        Optional<User> theUser = passwordResetTokenService.findUserByPasswordResetToken(theToken);
-	        if (theUser.isPresent()){
-	            passwordResetTokenService.resetPassword(theUser.get(), password,confirmpassword);
-	            return "redirect:/login?reset_success";
-	        }
-	        return "redirect:/error?not_found";
-	    }
-	 
+
+	@PostMapping("/reset-password")
+	public String resetPassword(HttpServletRequest request) {
+
+		log.info("Entering into LoginRegisterationController :: resetPassword");
+
+		String theToken = request.getParameter("token");
+		String password = request.getParameter("password");
+		String confirmpassword = request.getParameter("confirmPassword");
+
+		if (!password.equals(confirmpassword)) {
+			return "redirect:/error?mismatch_password";
+
+		}
+
+		String tokenVerificationResult = passwordResetTokenService.validatePasswordResetToken(theToken);
+		if (!tokenVerificationResult.equalsIgnoreCase("valid")) {
+			return "redirect:/error?invalid_token";
+		}
+		Optional<User> theUser = passwordResetTokenService.findUserByPasswordResetToken(theToken);
+		if (theUser.isPresent()) {
+			passwordResetTokenService.resetPassword(theUser.get(), password, confirmpassword);
+			return "redirect:/login?reset_success";
+		}
+		log.info("Exiting into LoginRegisterationController :: resetPassword");
+		return "redirect:/error?not_found";
+	}
 
 }

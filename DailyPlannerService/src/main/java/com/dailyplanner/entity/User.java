@@ -1,7 +1,8 @@
 package com.dailyplanner.entity;
 
-import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,13 +42,17 @@ public class User {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/mm/yyyy")
 	@Column(nullable = false)
-	private Date createdDate;
+	private LocalDate createdDate;
 
 	private char enabled;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id", updatable = false, insertable = false))
 	private List<Role> roles = new ArrayList<>();
+	
+	private char active;
+	
+	
 
 	public Long getId() {
 		return id;
@@ -97,11 +102,11 @@ public class User {
 		this.address = address;
 	}
 
-	public Date getCreatedDate() {
+	public LocalDate getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate(LocalDate createdDate) {
 		this.createdDate = createdDate;
 	}
 
@@ -119,6 +124,14 @@ public class User {
 
 	public void setEnabled(char enabled) {
 		this.enabled = enabled;
+	}
+
+	public char getActive() {
+		return active;
+	}
+
+	public void setActive(char active) {
+		this.active = active;
 	}
 
 }

@@ -10,12 +10,12 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 public class ApplicationConfig {
 
 	@Bean
-	public ModelMapper modelMapper(){
+	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
-	
-	    @Bean
-	    public JavaMailSender javaMailSender() {
-	        return new JavaMailSenderImpl();
-	    }
+
+	@Bean
+	public JavaMailSender javaMailSender() {
+		return new JavaMailSenderImpl();
+	}
 }

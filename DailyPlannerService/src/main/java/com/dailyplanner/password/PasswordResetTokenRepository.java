@@ -8,9 +8,4 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
 
 	Optional<PasswordResetToken> findByToken(String theToken);
 
-//	@Transactional
-//	@Modifying
-//	@Query("Update PasswordResetToken p set p.id=:id,p.user_id=:userId,p.token=:token,p.expirationTime=:expirationTime  where p.id=:id")
-//	void updateTokenDetails(Long id, Long userId, String token, Date expirationTime);
-
 }

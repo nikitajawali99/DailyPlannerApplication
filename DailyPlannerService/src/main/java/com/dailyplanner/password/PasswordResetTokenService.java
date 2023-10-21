@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PasswordResetTokenService implements IPasswordResetTokenService {
 
+	Logger log = LoggerFactory.getLogger(PasswordResetTokenService.class);
+
 	private final PasswordResetTokenRepository passwordResetTokenRepository;
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -33,8 +37,7 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
 	@Override
 	public void createPasswordResetTokenForUser(User user, String passwordResetToken) {
 
-		// PasswordResetToken resetToken = new PasswordResetToken(passwordResetToken,
-		// user);
+		log.info("Entering into PasswordResetTokenService :: createPasswordResetTokenForUser");
 		PasswordResetToken resetToken = new PasswordResetToken();
 		resetToken.setExpirationTime(TokenExpirationTime.getExpirationTime());
 		resetToken.setCreatedDate(new Date());
@@ -47,10 +50,6 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
 		if (passwordTokenDto != null && passwordTokenDto.getId() != null) {
 			resetToken.setId(passwordTokenDto.getId());
 			resetToken.setToken(passwordResetToken);
-//			passwordResetTokenRepository.updateTokenDetails(resetToken.getId(),userId,
-//					resetToken.getToken(),resetToken.getExpirationTime()
-//					);
-
 		} else {
 			resetToken = new PasswordResetToken();
 			resetToken.setExpirationTime(TokenExpirationTime.getExpirationTime());
@@ -60,10 +59,13 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
 
 		}
 		resetToken = passwordResetTokenRepository.save(resetToken);
+		log.info("Exiting into PasswordResetTokenService :: createPasswordResetTokenForUser");
 
 	}
 
 	private PasswordTokenDto getPasswordResetId(Long userId) {
+
+		log.info("Entering into PasswordResetTokenService :: getPasswordResetId");
 
 		List<PasswordTokenDto> passwordTokenDtoList = null;
 		PasswordTokenDto passwordTokenDtoDto = null;
@@ -93,7 +95,7 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
 				}
 
 			}
-
+			log.info("Exiting into PasswordResetTokenService :: getPasswordResetId");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,14 +106,18 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
 	@Override
 	public String validatePasswordResetToken(String theToken) {
 
+		log.info("Entering into PasswordResetTokenService :: validatePasswordResetToken");
 		Optional<PasswordResetToken> passwordResetToken = passwordResetTokenRepository.findByToken(theToken);
 		if (passwordResetToken.isEmpty()) {
+			log.info("Entering into PasswordResetTokenService :: invalid");
 			return "invalid";
 		}
 		Calendar calendar = Calendar.getInstance();
 		if ((passwordResetToken.get().getExpirationTime().getTime() - calendar.getTime().getTime()) <= 0) {
+			log.info("Entering into PasswordResetTokenService :: expired");
 			return "expired";
 		}
+		log.info("Exiting into PasswordResetTokenService :: validatePasswordResetToken");
 		return "valid";
 	}
 
@@ -123,6 +129,7 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
 	@Override
 	public String resetPassword(User theUser, String password, String confirmpassword) {
 
+		log.info("Entering into PasswordResetTokenService :: resetPassword");
 		theUser.setPassword(passwordEncoder.encode(password));
 		theUser.setConfirmPassword(passwordEncoder.encode(confirmpassword));
 
@@ -132,6 +139,7 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
 		} else {
 			return "redirect:/error?mismatch_password";
 		}
+		log.info("Exiting into PasswordResetTokenService :: resetPassword");
 		return "redirect:/login?reset_success";
 	}
 

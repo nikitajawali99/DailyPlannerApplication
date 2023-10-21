@@ -1,11 +1,32 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>All Todos</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+	<title>All Todos | Daily Planner System</title>
+	<style>
+		body {
+			background-color: #86B3D1
+		}
+
+		#footer {
+			position: fixed;
+			padding: 10px 10px 0px 10px;
+			bottom: 0;
+			width: 100%;
+			/* Height of the footer*/
+			height: 80px;
+		}
+	</style>
 </head>
+
 <body>
-	<table class="table table-striped table-hover table-bordered">
+	<table class="table table-striped table-hover table-bordered" style="background-color: floralwhite;">
 
 		<thead class="table-dark">
 
@@ -29,32 +50,35 @@
 
 
 	</table>
-	
+
 	<br>
 
-<footer class="footer-distributed">
+	<div id="footer">
+		<footer class="footer-distributed">
 
-		<div class="footer-right">
-			<center>
-				<p class="footer-company-about">
+			<div class="footer-right">
+				<center>
+					<p class="footer-company-about">
 
-					<strong>Become focused, organized, and calm with Daily
-						Planner.</strong> <br>The world’s #1 task manager and to-do list app
+						<strong>Become focused, organized, and calm with Daily
+							Planner.</strong> <br>The world’s #1 task manager and to-do list app
 
-				</p>
-			</center>
-		</div>
-		
+					</p>
+				</center>
+			</div>
+
 			<div class="footer-left">
 
-			<center>
-				<p class="footer-company-name">
-					Copyright © 2023 <strong>Nikita Jawali. </strong>All rights reserved
-				</p>
-			</center>
-		</div>
-		
-	</footer>
+				<center>
+					<p class="footer-company-name">
+						Copyright © 2023 <strong>Nikita Jawali. </strong>All rights reserved
+					</p>
+				</center>
+			</div>
+
+		</footer>
+	</div>
 
 </body>
+
 </html>

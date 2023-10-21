@@ -1,6 +1,7 @@
 package com.dailyplanner.controller;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -41,81 +42,79 @@ public class TodoController {
 	private final UserDetailsService userDetailsService;
 	private final UserService userService;
 
-
-	public TodoController(TodoService todoService,
-			UserDetailsService userDetailsService,UserService userService) {
+	public TodoController(TodoService todoService, UserDetailsService userDetailsService, UserService userService) {
 		this.todoService = todoService;
-		this.userDetailsService=userDetailsService;
-		this.userService=userService;
+		this.userDetailsService = userDetailsService;
+		this.userService = userService;
 	}
-	
-	   // http://localhost:8080/view/todos
-		@RequestMapping("/todos")
-		public String todos(Model model) {
 
-			log.info("Entering into TodoController :: todos");
-			List<TodoDto> todos = todoService.getAllTodos();
+	// http://localhost:8080/view/todos
+	@RequestMapping("/todos")
+	public String todos(Model model) {
 
-			model.addAttribute("todos", todos);
-			log.info("Exiting into TodoController :: todos");
-			return "todos.html";
-		}
-	
+		log.info("Entering into TodoController :: todos");
+		List<TodoDto> todos = todoService.getAllTodos();
+
+		model.addAttribute("todos", todos);
+		log.info("Exiting into TodoController :: todos");
+		return "todos.html";
+	}
+
 	// handler method to handle user registration form request
 	@PreAuthorize("hasRole('USER')")
-    @GetMapping("/createTodo")
-    public String createTodo(Model model){
-    	log.info("Entering into TodoController :: createTodo");
-        // create model object to store form data
-        TodoDto user = new TodoDto();
-        model.addAttribute("user", user);
-        log.info("Exiting into TodoController :: createTodo");
-        return "createTodo";
-    }
-	
-	   // handler method to handle user registration form submit request
-	//@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@GetMapping("/createTodo")
+	public String createTodo(Model model) {
+		log.info("Entering into TodoController :: createTodo");
+		// create model object to store form data
+		TodoDto user = new TodoDto();
+		model.addAttribute("user", user);
+		log.info("Exiting into TodoController :: createTodo");
+		return "createTodo";
+	}
+
+	// handler method to handle user registration form submit request
+	// @PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PreAuthorize("hasRole('USER')")
-    @PostMapping("/save")
-    public String todo(@Valid @ModelAttribute("user") TodoDto todoDto,
-                               BindingResult result,
-                               Model model,Principal principal){
-        try {
-        	log.info("Entering into TodoController :: todo");
-			
-			
-			if(result.hasErrors()){
-			    model.addAttribute("user", todoDto);
-			    return "/createTodo";
+	@PostMapping("/save")
+	public String todo(@Valid @ModelAttribute("user") TodoDto todoDto, BindingResult result, Model model,
+			Principal principal) {
+		try {
+			log.info("Entering into TodoController :: todo");
+
+			Date dateObj = new Date();
+
+			if (todoDto.getTargetDate().before(dateObj)) {
+				result.rejectValue("targetDate", null, "Target date can't be less than today or can't be today");
 			}
-			
+
+			if (result.hasErrors()) {
+				model.addAttribute("user", todoDto);
+				return "/createTodo";
+			}
+
 			UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
 
-			log.info("Entering into TodoController :: todo"+userDetails);
-			
+			log.info("Entering into TodoController :: todo" + userDetails);
+
 			User user = userService.findUserByEmail(userDetails.getUsername());
 
-			
-			//User user=userRepository.findByEmail(todoDto.getEmail());
-			
-			if(user!=null) {
-				
+			if (user != null) {
+
 				todoDto.setUserId(user.getId());
-				
-			}else {
+
+			} else {
 				return "redirect:/todos/createTodo?existingNoEmail";
 			}
-			
+
 			todoService.addTodo(todoDto);
 			log.info("Exiting into TodoController :: todo");
-		
+
 			return "redirect:/user-view";
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
-    }
+	}
 
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/getTodoById/{id}")
@@ -136,7 +135,7 @@ public class TodoController {
 	}
 
 	// Build Update Todo REST API
-	
+
 	@GetMapping("/updateTodoById/{id}")
 	public ResponseEntity<TodoDto> updateTodo(@RequestBody TodoDto todoDto, @PathVariable("id") Long todoId) {
 		log.info("Entering into TodoController :: updateTodo");
@@ -144,13 +143,11 @@ public class TodoController {
 		log.info("Exiting into TodoController :: updateTodo");
 		return ResponseEntity.ok(updatedTodo);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/deleteTodoById/{id}")
 	public String deleteTodoById(@PathVariable("id") Long todoId) {
 		log.info("Entering into TodoController :: deleteTodoById");
-		
-		
 		todoService.deleteTodo(todoId);
 		log.info("Exiting into TodoController :: deleteTodoById");
 		return "redirect:/user-view";
@@ -165,7 +162,7 @@ public class TodoController {
 		return ResponseEntity.ok(updatedTodo);
 	}
 
-	   @PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PatchMapping("{id}/in-complete")
 	public ResponseEntity<TodoDto> inCompleteTodo(@PathVariable("id") Long todoId) {
 		TodoDto updatedTodo = todoService.inCompleteTodo(todoId);

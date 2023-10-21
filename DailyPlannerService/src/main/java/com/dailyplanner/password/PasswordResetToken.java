@@ -23,7 +23,7 @@ public class PasswordResetToken {
 	private String token;
 	private Date expirationTime;
 	@OneToOne
-	@JoinColumn(name = "user_id",unique = false)
+	@JoinColumn(name = "user_id", unique = false)
 	private User user;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/mm/yyyy")
 	@Column(nullable = false)
@@ -42,7 +42,5 @@ public class PasswordResetToken {
 		this.expirationTime = TokenExpirationTime.getExpirationTime();
 		this.user = user;
 	}
-	
-	
 
 }
