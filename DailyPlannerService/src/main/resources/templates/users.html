@@ -79,8 +79,7 @@
 					<td th:text="${user.createdDate}"></td>
 					<td>
 						<a class="btn btn-primary" th:href="@{/users/{id}/view(id=${user.id})}">View Todos</a>
-						<!--                 <a class="btn btn-warning" th:href="@{/users/{id}/edit(id=${user.id})}">Edit</a> -->
-						<a class="btn btn-danger" th:href="@{/users/{id}/delete(id=${user.id})}">Delete</a>
+						<a class="btn btn-danger" th:href="@{/users/{id}/delete(id=${user.id})}" onclick="return confirm('Are you sure to delete this user?')">Delete</a>
 					</td>
 
 				</tr>

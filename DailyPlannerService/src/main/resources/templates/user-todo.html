@@ -73,8 +73,9 @@
 					<td>
 
 						<a class="btn btn-warning" th:href="@{/editTodo/{id}(id=${user.userId})}">Edit-Todo</a>
-						<a class="btn btn-danger"
-							th:href="@{/todos/deleteTodoById/{id}(id=${user.userId})}">Delete-Todo</a>
+						<a class="btn btn-danger" 
+							th:href="@{/todos/deleteTodoById/{id}(id=${user.userId})}"
+							onclick="return confirm('Are you sure to delete this todo?')">Delete-Todo</a>
 					</td>
 
 				</tr>
