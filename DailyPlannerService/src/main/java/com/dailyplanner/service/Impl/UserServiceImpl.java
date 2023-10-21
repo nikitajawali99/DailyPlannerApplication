@@ -116,6 +116,7 @@ public class UserServiceImpl implements UserService {
 			Date date = new Date();
 			LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
+			user.setActive('1');
 			user.setCreatedDate(localDate);
 			User savedUser = userRepository.save(user);
 
@@ -176,7 +177,7 @@ public class UserServiceImpl implements UserService {
 
 		existingUser.setEmail(user.getEmail());
 		existingUser.setAddress(user.getAddress());
-
+		existingUser.setActive('1');
 		User updatedUser = userRepository.save(existingUser);
 		log.info("Exiting into UserServiceImpl :: updateUser");
 		return modelMapper.map(updatedUser, UserDto.class);
@@ -190,20 +191,27 @@ public class UserServiceImpl implements UserService {
 			log.info("Entering into UserServiceImpl :: deleteUser");
 			userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-			UserRolesTokenDto todo = searchByUserId(userId);
-			if (todo.getUserVerificationTokenId() != null)
-				verificationRepository.deleteById(todo.getUserVerificationTokenId());
-			if (todo.getUserPasswordResetTokenId() != null)
-				passwordResetTokenRepository.deleteById(todo.getUserPasswordResetTokenId());
-			if (todo.getUserTodoId() != null)
-				todoRepository.deleteById(todo.getUserTodoId());
+			List<UserRolesTokenDto> todoDtoList = searchByUserId(userId);
+
+			for (UserRolesTokenDto todo : todoDtoList) {
+
+				if (todo.getUserVerificationTokenId() != null)
+					verificationRepository.deleteById(todo.getUserVerificationTokenId());
+				if (todo.getUserPasswordResetTokenId() != null)
+					passwordResetTokenRepository.deleteById(todo.getUserPasswordResetTokenId());
+				if (todo.getUserTodoId() != null)
+					todoRepository.deleteById(todo.getUserTodoId());
+
+			}
+			
+			userRepository.updateNotActive(userId);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private UserRolesTokenDto searchByUserId(Long userId) {
+	private List<UserRolesTokenDto> searchByUserId(Long userId) {
 
 		List<UserRolesTokenDto> todoDtoList = null;
 		UserRolesTokenDto todoDto = null;
@@ -246,7 +254,7 @@ public class UserServiceImpl implements UserService {
 			e.printStackTrace();
 		}
 		// log.info("Exiting into TodoServiceImpl :: getUserTodoById");
-		return todoDto;
+		return todoDtoList;
 	}
 
 	@Transactional
@@ -283,6 +291,7 @@ public class UserServiceImpl implements UserService {
 				role = checkRoleExist();
 			}
 			user.setEnabled('0');
+			user.setActive('1');
 			user.setRoles(Arrays.asList(role));
 			log.info("Exiting into UserServiceImpl :: saveUser");
 			userRepository.save(user);
@@ -301,7 +310,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserDto> findAllUsers() {
-		List<User> users = userRepository.findAll();
+		List<User> users = userRepository.findUpdatedUsers();
 		return users.stream().map((user) -> mapToUserDto(user)).collect(Collectors.toList());
 	}
 

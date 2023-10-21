@@ -266,7 +266,7 @@ public class AuthController {
 				existingUser.setId(existingUser.getId());
 				existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
 				existingUser.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-
+				existingUser.setActive('1');
 				userRepository.save(existingUser);
 				log.info("Exiting into changePasswordSave :: updating-password");
 				return "redirect:/change-password?success";
