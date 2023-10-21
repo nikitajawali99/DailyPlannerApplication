@@ -9,18 +9,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import com.dailyplanner.constant.Constant;
+import com.dailyplanner.dto.TodoDto;
 import com.dailyplanner.dto.UserDto;
+import com.dailyplanner.dto.UserRolesTokenDto;
 import com.dailyplanner.entity.Role;
 import com.dailyplanner.entity.User;
 import com.dailyplanner.exception.ResourceNotFoundException;
+import com.dailyplanner.password.PasswordResetTokenRepository;
 import com.dailyplanner.repository.RoleRepository;
+import com.dailyplanner.repository.TodoRepository;
 import com.dailyplanner.repository.UserRepository;
+import com.dailyplanner.repository.UserRolesRepository;
 import com.dailyplanner.service.UserService;
+import com.dailyplanner.token.VerificationTokenRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,13 +46,24 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final VerificationTokenRepository verificationRepository;
+	private final PasswordResetTokenRepository passwordResetTokenRepository;
+	private final TodoRepository todoRepository;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-			PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+			PasswordEncoder passwordEncoder, ModelMapper modelMapper,
+			VerificationTokenRepository verificationRepository,
+			PasswordResetTokenRepository passwordResetTokenRepository, TodoRepository todoRepository) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.modelMapper = modelMapper;
+		this.verificationRepository = verificationRepository;
+		this.passwordResetTokenRepository = passwordResetTokenRepository;
+		this.todoRepository = todoRepository;
 	}
 
 	private final ModelMapper modelMapper;
@@ -162,17 +183,70 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
+	@Modifying
 	public void deleteUser(Long userId) {
 		try {
 			log.info("Entering into UserServiceImpl :: deleteUser");
 			userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-			// userRolesRepository.deleteById(userId);
-			userDelete(userId);
+			UserRolesTokenDto todo = searchByUserId(userId);
+			if (todo.getUserVerificationTokenId() != null)
+				verificationRepository.deleteById(todo.getUserVerificationTokenId());
+			if (todo.getUserPasswordResetTokenId() != null)
+				passwordResetTokenRepository.deleteById(todo.getUserPasswordResetTokenId());
+			if (todo.getUserTodoId() != null)
+				todoRepository.deleteById(todo.getUserTodoId());
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private UserRolesTokenDto searchByUserId(Long userId) {
+
+		List<UserRolesTokenDto> todoDtoList = null;
+		UserRolesTokenDto todoDto = null;
+
+		StringBuilder sqlQuery = new StringBuilder("SELECT t.id,v.id,p.id,u.user_id,todo.id  \r\n"
+				+ " FROM user_management.users t \r\n" + " left join verification_token v on t.id=v.user_id\r\n"
+				+ " left join password_reset_token p on t.id=p.user_id \r\n"
+				+ " left join users_roles u on t.id=u.user_id" + " left join todos todo on t.id=todo.users_id"
+				+ " where t.id=:userId");
+
+		Query query = entityManager.createNativeQuery(sqlQuery.toString());
+
+		query.setParameter("userId", userId);
+
+		try {
+
+			List<Object[]> obj = query.getResultList();
+			todoDtoList = new ArrayList<>();
+
+			if (!obj.isEmpty()) {
+
+				for (Object[] record : obj) {
+
+					todoDto = new UserRolesTokenDto();
+					todoDto.setUserId(Long.parseLong(String.valueOf(record[0])));
+					if (record[1] != null)
+						todoDto.setUserVerificationTokenId(Long.parseLong(String.valueOf(record[1])));
+					if (record[2] != null)
+						todoDto.setUserPasswordResetTokenId(Long.parseLong(String.valueOf(record[2])));
+					if (record[3] != null)
+						todoDto.setUserRoleId(Long.parseLong(String.valueOf(record[3])));
+					if (record[4] != null)
+						todoDto.setUserTodoId(Long.parseLong(String.valueOf(record[4])));
+					todoDtoList.add(todoDto);
+				}
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// log.info("Exiting into TodoServiceImpl :: getUserTodoById");
+		return todoDto;
 	}
 
 	@Transactional
