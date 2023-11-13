@@ -142,6 +142,7 @@ public class LoginRegisterationController {
 			if (userDto.getConfirmPassword() != null && userDto.getPassword() != null) {
 				if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
 					result.rejectValue("password", null, "Password and Confirm Password should be same");
+					result.rejectValue("confirmPassword", null, "Password and Confirm Password should be same");
 				}
 			}
 
