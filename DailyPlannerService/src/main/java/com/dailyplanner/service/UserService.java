@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.ui.Model;
 
 import com.dailyplanner.dto.UserDto;
+import com.dailyplanner.dto.UserRolesTokenDto;
 import com.dailyplanner.entity.User;
 
 
@@ -29,6 +30,8 @@ public interface UserService {
 
 	User findUserByuserName(String userName);
 
+	List<UserRolesTokenDto> searchVerificationIds(Long userId);
+	
 	UserDto getStudentById(Long id);
 
 }

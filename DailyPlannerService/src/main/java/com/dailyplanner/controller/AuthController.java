@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.dailyplanner.controller.AuthController;
 import com.dailyplanner.dto.TodoDto;
 import com.dailyplanner.dto.UserDto;
+import com.dailyplanner.dto.UserRolesTokenDto;
 import com.dailyplanner.entity.User;
 import com.dailyplanner.event.RegistrationCompleteEvent;
 import com.dailyplanner.repository.UserRepository;
@@ -212,9 +213,12 @@ public class AuthController {
 				User updateNotEnable = null; 
 				if(!existingId.getEmail().equals(user.getEmail())) {
 					
-					//List<Long> verificationTokenIds=verificationRepository.findUserId(user.getId());
+					List<UserRolesTokenDto> verificationTokenIds=userService.searchVerificationIds(user.getId());
 					
-					//verificationRepository.deleteById(id);
+					for (UserRolesTokenDto userRolesTokenDto : verificationTokenIds) {
+						verificationRepository.deleteById(userRolesTokenDto.getUserId());
+					}
+					//
 					 userRepository.updateNotEnable(user.getId());
 					
 					publisher.publishEvent(new RegistrationCompleteEvent(user, UrlUtil.getApplicationUrl(request)));				

@@ -210,6 +210,43 @@ public class UserServiceImpl implements UserService {
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public List<UserRolesTokenDto> searchVerificationIds(Long id) {
+
+		List<UserRolesTokenDto> todoDtoList = null;
+		UserRolesTokenDto todoDto = null;
+
+		StringBuilder sqlQuery = new StringBuilder(" select p.id,p.token from verification_token p\r\n"
+				+ " join users u on p.user_id=u.id \r\n"
+				+ " where p.user_id=:id ");
+
+		Query query = entityManager.createNativeQuery(sqlQuery.toString());
+
+		query.setParameter("id", id);
+
+		try {
+
+			List<Object[]> obj = query.getResultList();
+			todoDtoList = new ArrayList<>();
+
+			if (!obj.isEmpty()) {
+
+				for (Object[] record : obj) {
+
+					todoDto = new UserRolesTokenDto();
+					todoDto.setUserId(Long.parseLong(String.valueOf(record[0])));
+					todoDtoList.add(todoDto);
+				}
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// log.info("Exiting into TodoServiceImpl :: getUserTodoById");
+		return todoDtoList;
+	}
 
 	private List<UserRolesTokenDto> searchByUserId(Long userId) {
 
