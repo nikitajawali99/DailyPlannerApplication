@@ -174,11 +174,11 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new ResourceNotFoundException("User", "id", user.getId()));
 
 		existingUser.setName(user.getFirstName());
-
 		existingUser.setEmail(user.getEmail());
 		existingUser.setAddress(user.getAddress());
 		existingUser.setActive('1');
 		User updatedUser = userRepository.save(existingUser);
+		existingUser.setEnabled('1');
 		log.info("Exiting into UserServiceImpl :: updateUser");
 		return modelMapper.map(updatedUser, UserDto.class);
 	}

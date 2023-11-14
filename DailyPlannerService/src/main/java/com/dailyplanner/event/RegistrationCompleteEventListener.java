@@ -105,8 +105,8 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 		log.info("Entering into RegistrationCompleteEventListener :: emailMessage");
 		try {
 
-			final String username = "nikitajawali99@gmail.com";
-			final String password = "rrai usmh clvs fwqu";
+			final String username = "dailyplannerapplication23@gmail.com";
+			final String password = "wgij tzmm ivps kfwx";
 
 			Properties prop = new Properties();
 			prop.put("mail.smtp.host", "smtp.gmail.com");

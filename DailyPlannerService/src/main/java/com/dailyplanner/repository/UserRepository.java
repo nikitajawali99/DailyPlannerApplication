@@ -37,4 +37,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("select p from User p where p.active='1' ")
 	List<User> findUpdatedUsers();
 
+//	@Modifying
+//	@Transactional
+//	@Query("Update User u set u.enabled='0' where u.id=:id ")
+//	void updateActiveDtl(@Param("id") Long id);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE USERS u SET u.enabled='0' where u.id=:id", nativeQuery = true)
+	void updateNotEnable(@Param("id") Long id);
+
 }

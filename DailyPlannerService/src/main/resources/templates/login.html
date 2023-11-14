@@ -80,7 +80,11 @@
 						Password reset successfully, please log in here.
 					</div>
 				</div>
-
+				<div th:if="${param.success}">
+					<div class="alert alert-info">
+						You have changed our email, please check your email inbox to verify.
+					</div>
+				</div>
 
 				<div class="card">
 					<div class="card-header">

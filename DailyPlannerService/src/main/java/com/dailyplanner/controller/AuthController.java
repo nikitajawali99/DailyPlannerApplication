@@ -3,9 +3,11 @@ package com.dailyplanner.controller;
 import java.security.Principal;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,11 +24,15 @@ import com.dailyplanner.controller.AuthController;
 import com.dailyplanner.dto.TodoDto;
 import com.dailyplanner.dto.UserDto;
 import com.dailyplanner.entity.User;
+import com.dailyplanner.event.RegistrationCompleteEvent;
 import com.dailyplanner.repository.UserRepository;
 import com.dailyplanner.repository.UserRolesRepository;
 import com.dailyplanner.service.TodoService;
 import com.dailyplanner.service.UserService;
+import com.dailyplanner.token.VerificationTokenRepository;
+import com.dailyplanner.utils.UrlUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
@@ -42,19 +48,23 @@ public class AuthController {
 	private UserRepository userRepository;
 	private UserRolesRepository userRolesRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final ApplicationEventPublisher publisher;
+	private final VerificationTokenRepository verificationRepository;
 
 	public AuthController(UserService userService, TodoService todoService, UserDetailsService userDetailsService,
-			UserRepository userRepository, UserRolesRepository userRolesRepository, PasswordEncoder passwordEncoder) {
+			UserRepository userRepository, UserRolesRepository userRolesRepository, PasswordEncoder passwordEncoder,
+			ApplicationEventPublisher publisher,VerificationTokenRepository verificationRepository) {
 		this.userService = userService;
 		this.todoService = todoService;
 		this.userDetailsService = userDetailsService;
 		this.userRepository = userRepository;
 		this.userRolesRepository = userRolesRepository;
 		this.passwordEncoder = passwordEncoder;
-
+		this.publisher = publisher;
+		this.verificationRepository=verificationRepository;
 	}
 
-	@PreAuthorize("hasRole('USER')")
+//	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/user-view")
 	public String userView(Model model, Principal principal) throws ParseException {
 
@@ -161,15 +171,16 @@ public class AuthController {
 	}
 
 	// handler method to handle edit student form submit request
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/users/{id}")
 	@Transactional
 	public String updateStudent(@PathVariable("id") Long id, @Valid @ModelAttribute("user") UserDto userDto,
-			BindingResult result, Model model) {
-
+			BindingResult result, Model model,HttpServletRequest request) {
+		User existingId=null;
 		try {
+			User existingEmail = userService.findUserByEmail(userDto.getEmail());
 			log.info("Entering into AuthController :: updateStudent");
-			User existingId = userRepository.findByUserId(id);
+			 existingId = userRepository.findByUserId(id);
 
 			if (existingId.getEmail().equals(userDto.getEmail())) {
 
@@ -177,8 +188,7 @@ public class AuthController {
 
 			} else {
 
-				User existingEmail = userService.findUserByEmail(userDto.getEmail());
-
+				
 				if (existingEmail != null && existingEmail.getEmail() != null && !existingEmail.getEmail().isEmpty()) {
 					result.rejectValue("email", null, "There is already an account registered with the same email");
 				}
@@ -190,21 +200,47 @@ public class AuthController {
 				return "edit-user";
 			} else {
 				log.info("Entering into updateStudent :: updateUser");
-				userService.updateUser(userDto);
+								
+				User user =new User();
+				user.setId(existingId.getId());
+				user.setName(userDto.getFirstName());
+				user.setAddress(userDto.getAddress());
+				user.setEmail(userDto.getEmail());
+				existingId = userRepository.findByUserId(id);
+				System.out.println(user.getEmail());
+				System.out.println(existingId.getEmail());
+				User updateNotEnable = null; 
+				if(!existingId.getEmail().equals(user.getEmail())) {
+					
+					//List<Long> verificationTokenIds=verificationRepository.findUserId(user.getId());
+					
+					//verificationRepository.deleteById(id);
+					 userRepository.updateNotEnable(user.getId());
+					
+					publisher.publishEvent(new RegistrationCompleteEvent(user, UrlUtil.getApplicationUrl(request)));				
+				}
+				
+				Optional<User> userdls = userRepository.findById(id);
+				if (userdls.get().getEnabled() == '1') {
+
+					UserDto updateUser = userService.updateUser(userDto);
+				}
+
+				
 				log.info("Exiting into updateStudent :: updateUser");
 			}
 
-			Long roleId = userRolesRepository.findRoleId(id);
-
-			if (roleId == 2) {
-				return "redirect:/user-view";
-			}
+//			Long roleId = userRolesRepository.findRoleId(id);
+//
+//			if (roleId == 2) {
+//				return "redirect:/login?success";
+//			}
 			log.info("Exiting into AuthController :: updateStudent");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return "redirect:/users";
+		return "redirect:/login?success";
 	}
 
 	// Handler method to handle delete student request
