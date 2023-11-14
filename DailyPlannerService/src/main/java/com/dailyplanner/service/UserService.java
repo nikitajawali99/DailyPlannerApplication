@@ -9,6 +9,9 @@ import com.dailyplanner.dto.UserDto;
 import com.dailyplanner.dto.UserRolesTokenDto;
 import com.dailyplanner.entity.User;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+
 
 public interface UserService {
 	
@@ -33,5 +36,7 @@ public interface UserService {
 	List<UserRolesTokenDto> searchVerificationIds(Long userId);
 	
 	UserDto getStudentById(Long id);
+
+	void updateUserDetails(@Valid UserDto userDto, HttpServletRequest request);
 
 }

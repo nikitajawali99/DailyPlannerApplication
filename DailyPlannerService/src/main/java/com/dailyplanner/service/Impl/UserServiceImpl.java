@@ -3,30 +3,33 @@ package com.dailyplanner.service.Impl;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import com.dailyplanner.constant.Constant;
-import com.dailyplanner.dto.TodoDto;
 import com.dailyplanner.dto.UserDto;
 import com.dailyplanner.dto.UserRolesTokenDto;
 import com.dailyplanner.entity.Role;
 import com.dailyplanner.entity.User;
+import com.dailyplanner.event.RegistrationCompleteEvent;
 import com.dailyplanner.exception.ResourceNotFoundException;
 import com.dailyplanner.password.PasswordResetTokenRepository;
 import com.dailyplanner.repository.RoleRepository;
 import com.dailyplanner.repository.TodoRepository;
 import com.dailyplanner.repository.UserRepository;
-import com.dailyplanner.repository.UserRolesRepository;
 import com.dailyplanner.service.UserService;
 import com.dailyplanner.token.VerificationTokenRepository;
+import com.dailyplanner.utils.UrlUtil;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -49,6 +52,7 @@ public class UserServiceImpl implements UserService {
 	private final VerificationTokenRepository verificationRepository;
 	private final PasswordResetTokenRepository passwordResetTokenRepository;
 	private final TodoRepository todoRepository;
+	private final ApplicationEventPublisher publisher;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -56,7 +60,8 @@ public class UserServiceImpl implements UserService {
 	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
 			PasswordEncoder passwordEncoder, ModelMapper modelMapper,
 			VerificationTokenRepository verificationRepository,
-			PasswordResetTokenRepository passwordResetTokenRepository, TodoRepository todoRepository) {
+			PasswordResetTokenRepository passwordResetTokenRepository, TodoRepository todoRepository,
+			ApplicationEventPublisher publisher) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
@@ -64,6 +69,7 @@ public class UserServiceImpl implements UserService {
 		this.verificationRepository = verificationRepository;
 		this.passwordResetTokenRepository = passwordResetTokenRepository;
 		this.todoRepository = todoRepository;
+		this.publisher = publisher;
 	}
 
 	private final ModelMapper modelMapper;
@@ -203,14 +209,14 @@ public class UserServiceImpl implements UserService {
 					todoRepository.deleteById(todo.getUserTodoId());
 
 			}
-			
+
 			userRepository.updateNotActive(userId);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public List<UserRolesTokenDto> searchVerificationIds(Long id) {
 
@@ -218,8 +224,7 @@ public class UserServiceImpl implements UserService {
 		UserRolesTokenDto todoDto = null;
 
 		StringBuilder sqlQuery = new StringBuilder(" select p.id,p.token from verification_token p\r\n"
-				+ " join users u on p.user_id=u.id \r\n"
-				+ " where p.user_id=:id ");
+				+ " join users u on p.user_id=u.id \r\n" + " where p.user_id=:id ");
 
 		Query query = entityManager.createNativeQuery(sqlQuery.toString());
 
@@ -400,5 +405,37 @@ public class UserServiceImpl implements UserService {
 		savedUserDto.setConfirmPassword(userDto.getConfirmPassword());
 		log.info("Exiting into UserServiceImpl :: getStudentById");
 		return savedUserDto;
+	}
+
+	@Override
+	@Transactional
+	public void updateUserDetails(@Valid UserDto userDto, HttpServletRequest request) {
+
+		try {
+			User userDtl = userRepository.findByUserId(userDto.getId());
+			User user = new User();
+			user.setId(userDto.getId());
+			user.setName(userDto.getFirstName());
+			user.setAddress(userDto.getAddress());
+			user.setEmail(userDto.getEmail());
+
+			if (!userDto.getEmail().equals(userDtl.getEmail())) {
+
+				List<UserRolesTokenDto> verificationTokenIds = searchVerificationIds(user.getId());
+
+				for (UserRolesTokenDto userRolesTokenDto : verificationTokenIds) {
+					verificationRepository.deleteById(userRolesTokenDto.getUserId());
+				}
+
+				userRepository.updateNotEnable(user.getId());
+
+				publisher.publishEvent(new RegistrationCompleteEvent(user, UrlUtil.getApplicationUrl(request)));
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 }
